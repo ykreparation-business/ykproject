@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPortfolioFilters();
   initContactForm();
   setActiveNav();
+  initDragScroll();
 });
 
 /* ── Ink drop scroll progress ── */
@@ -294,6 +295,30 @@ function getMsg(input) {
     message: 'Décrivez votre projet — même en quelques mots.',
   };
   return msgs[input.name] || 'Ce champ est requis.';
+}
+
+/* ── Drag scroll galerie ── */
+function initDragScroll() {
+  const track = document.querySelector('.apple-scroll-track');
+  if (!track) return;
+
+  let isDown = false;
+  let startX, scrollLeft;
+
+  track.addEventListener('mousedown', e => {
+    isDown = true;
+    startX = e.pageX - track.offsetLeft;
+    scrollLeft = track.scrollLeft;
+  });
+  track.addEventListener('mouseleave', () => { isDown = false; });
+  track.addEventListener('mouseup',    () => { isDown = false; });
+  track.addEventListener('mousemove',  e => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x    = e.pageX - track.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    track.scrollLeft = scrollLeft - walk;
+  });
 }
 
 /* ── Active nav link ── */
