@@ -233,154 +233,137 @@
     </section>
 
     <!-- ══════════════════════════════════════════
-         8. AVIS GOOGLE
+         8. AVIS GOOGLE — Testimonial Cards
     ══════════════════════════════════════════ -->
-    <section class="apple-reviews" aria-label="Avis Google">
-      <div class="apple-reviews-header reveal">
+    <section class="tc-section" aria-label="Avis Google">
+      <!-- Header score -->
+      <div class="tc-header reveal">
         <div>
           <span class="section-eyebrow">Avis Google</span>
           <h2 class="section-title">Ce que disent nos clients</h2>
         </div>
-        <div class="apple-reviews-score reveal reveal-delay-1">
-          <span class="apple-reviews-number">5.0</span>
-          <div class="apple-reviews-meta">
-            <div class="apple-reviews-stars" aria-label="5 étoiles sur 5">★★★★★</div>
-            <span class="apple-reviews-count">27 avis vérifiés</span>
-            <a
-              href="https://share.google/4nmAHEpRC6CUGp8Pg"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="apple-reviews-link"
-            >Voir sur Google</a>
+        <div class="tc-score">
+          <span class="tc-score-number">5.0</span>
+          <div class="tc-score-meta">
+            <span class="tc-score-stars" aria-label="5 étoiles">★★★★★</span>
+            <span class="tc-score-count">27 avis vérifiés</span>
+            <a href="https://share.google/4nmAHEpRC6CUGp8Pg" target="_blank" rel="noopener noreferrer" class="tc-score-link">Voir sur Google →</a>
           </div>
         </div>
       </div>
 
-      <!-- Carrousel infini flottant -->
-      <div class="apple-reviews-carousel" aria-label="Carousel des avis">
-        <div class="apple-reviews-track">
+      <!-- Carousel -->
+      <div class="tc-carousel-wrap">
+        <div class="tc-carousel" id="tc-carousel">
+          <div class="tc-track">
 
-          <article class="apple-review-card" style="--float-delay:0s">
-            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
-            <p class="apple-review-text">"Un travail exceptionnel, vraiment à l'écoute. Mon tatouage tribal est exactement ce que j'avais imaginé, voire mieux. Je recommande sans hésiter !"</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Marie-Line T.</span>
-              <span class="apple-review-date">Il y a 2 semaines</span>
-            </footer>
-          </article>
+            <button class="tc-card"
+              data-name="Marie-Line T."
+              data-desig="cliente fidèle · guadeloupe"
+              data-desc="un travail exceptionnel, vraiment à l'écoute. mon tatouage tribal est exactement ce que j'avais imaginé, voire mieux. chaque détail a été respecté, l'artiste prend le temps de comprendre ce qu'on veut. je recommande sans hésiter !"
+            >
+              <div class="tc-card-bg" aria-hidden="true"><img src="https://images.unsplash.com/photo-1590556409324-aa1d726e5c3c?auto=format&fit=crop&w=400&q=60" alt=""></div>
+              <div class="tc-card-avatar"><img src="https://i.pravatar.cc/150?img=47" alt="Marie-Line T." loading="lazy"></div>
+              <p class="tc-card-text">"un travail exceptionnel, vraiment à l'écoute. mon tatouage tribal est exactement ce que j'avais imaginé, voire mieux..."</p>
+              <p class="tc-card-name">Marie-Line T.</p>
+              <p class="tc-card-desig">cliente fidèle · guadeloupe</p>
+            </button>
 
-          <article class="apple-review-card" style="--float-delay:-1.5s">
-            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
-            <p class="apple-review-text">"Cadre super agréable, artiste très professionnel. Le résultat est magnifique, les détails sont incroyables. Merci !"</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Kévin M.</span>
-              <span class="apple-review-date">Il y a 1 mois</span>
-            </footer>
-          </article>
+            <button class="tc-card"
+              data-name="Kévin M."
+              data-desig="client · goyave"
+              data-desc="cadre super agréable, artiste très professionnel. le résultat est magnifique, les détails sont incroyables. j'avais peur pour mon premier tatouage, mais tout s'est passé dans le calme et la confiance. merci !"
+            >
+              <div class="tc-card-bg" aria-hidden="true"><img src="https://images.unsplash.com/photo-1611501275019-9b5cda994fa4?auto=format&fit=crop&w=400&q=60" alt=""></div>
+              <div class="tc-card-avatar"><img src="https://i.pravatar.cc/150?img=12" alt="Kévin M." loading="lazy"></div>
+              <p class="tc-card-text">"cadre super agréable, artiste très professionnel. le résultat est magnifique, les détails sont incroyables..."</p>
+              <p class="tc-card-name">Kévin M.</p>
+              <p class="tc-card-desig">client · goyave</p>
+            </button>
 
-          <article class="apple-review-card" style="--float-delay:-0.8s">
-            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
-            <p class="apple-review-text">"Je suis venue pour un fineline, je suis repartie avec une œuvre d'art. L'accueil est chaleureux et le studio très propre. Parfait !"</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Sandrine B.</span>
-              <span class="apple-review-date">Il y a 1 mois</span>
-            </footer>
-          </article>
+            <button class="tc-card"
+              data-name="Sandrine B."
+              data-desig="cliente · guadeloupe"
+              data-desc="je suis venue pour un fineline, je suis repartie avec une œuvre d'art. l'accueil est chaleureux et le studio très propre. le trait est d'une précision folle. parfait du début à la fin !"
+            >
+              <div class="tc-card-bg" aria-hidden="true"><img src="https://images.unsplash.com/photo-1598030473953-b0b9bb7e56e5?auto=format&fit=crop&w=400&q=60" alt=""></div>
+              <div class="tc-card-avatar"><img src="https://i.pravatar.cc/150?img=32" alt="Sandrine B." loading="lazy"></div>
+              <p class="tc-card-text">"je suis venue pour un fineline, je suis repartie avec une œuvre d'art. l'accueil est chaleureux et le studio très propre..."</p>
+              <p class="tc-card-name">Sandrine B.</p>
+              <p class="tc-card-desig">cliente · guadeloupe</p>
+            </button>
 
-          <article class="apple-review-card" style="--float-delay:-2.2s">
-            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
-            <p class="apple-review-text">"Mon premier tatouage et certainement pas le dernier. Le dessin proposé était au-delà de mes attentes. Ambiance zen, travail propre."</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Joëlle R.</span>
-              <span class="apple-review-date">Il y a 2 mois</span>
-            </footer>
-          </article>
+            <button class="tc-card"
+              data-name="Joëlle R."
+              data-desig="cliente fidèle · basse-terre"
+              data-desc="mon premier tatouage et certainement pas le dernier. le dessin proposé était au-delà de mes attentes. ambiance zen, travail propre. j'ai l'impression d'avoir porté cette œuvre toute ma vie."
+            >
+              <div class="tc-card-bg" aria-hidden="true"><img src="https://images.unsplash.com/photo-1617220730022-d75ba7e7ced3?auto=format&fit=crop&w=400&q=60" alt=""></div>
+              <div class="tc-card-avatar"><img src="https://i.pravatar.cc/150?img=25" alt="Joëlle R." loading="lazy"></div>
+              <p class="tc-card-text">"mon premier tatouage et certainement pas le dernier. le dessin proposé était au-delà de mes attentes. ambiance zen..."</p>
+              <p class="tc-card-name">Joëlle R.</p>
+              <p class="tc-card-desig">cliente fidèle · basse-terre</p>
+            </button>
 
-          <article class="apple-review-card" style="--float-delay:-3s">
-            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
-            <p class="apple-review-text">"Super expérience du début à la fin. On sent que c'est une vraie passion. Mon maori sur l'épaule est une pièce unique."</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Thierry L.</span>
-              <span class="apple-review-date">Il y a 2 mois</span>
-            </footer>
-          </article>
+            <button class="tc-card"
+              data-name="Thierry L."
+              data-desig="client · pointe-à-pitre"
+              data-desc="super expérience du début à la fin. on sent que c'est une vraie passion. mon maori sur l'épaule est une pièce unique. l'artiste a su s'approprier mes idées pour créer quelque chose d'authentique."
+            >
+              <div class="tc-card-bg" aria-hidden="true"><img src="https://images.unsplash.com/photo-1603145733146-ae562a55031e?auto=format&fit=crop&w=400&q=60" alt=""></div>
+              <div class="tc-card-avatar"><img src="https://i.pravatar.cc/150?img=8" alt="Thierry L." loading="lazy"></div>
+              <p class="tc-card-text">"super expérience du début à la fin. on sent que c'est une vraie passion. mon maori sur l'épaule est une pièce unique..."</p>
+              <p class="tc-card-name">Thierry L.</p>
+              <p class="tc-card-desig">client · pointe-à-pitre</p>
+            </button>
 
-          <article class="apple-review-card" style="--float-delay:-1s">
-            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
-            <p class="apple-review-text">"Accueil chaleureux, hygiène irréprochable, résultat bluffant. J'ai voyagé depuis Pointe-à-Pitre et je ne regrette pas du tout."</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Priscilla W.</span>
-              <span class="apple-review-date">Il y a 3 mois</span>
-            </footer>
-          </article>
+            <button class="tc-card"
+              data-name="Priscilla W."
+              data-desig="cliente · martinique"
+              data-desc="accueil chaleureux, hygiène irréprochable, résultat bluffant. j'ai voyagé depuis la martinique et je ne regrette pas du tout. ça valait largement le déplacement. une adresse à ne pas manquer aux antilles."
+            >
+              <div class="tc-card-bg" aria-hidden="true"><img src="https://images.unsplash.com/photo-1564182842519-8a3b2af3e228?auto=format&fit=crop&w=400&q=60" alt=""></div>
+              <div class="tc-card-avatar"><img src="https://i.pravatar.cc/150?img=44" alt="Priscilla W." loading="lazy"></div>
+              <p class="tc-card-text">"accueil chaleureux, hygiène irréprochable, résultat bluffant. j'ai voyagé depuis la martinique et je ne regrette pas..."</p>
+              <p class="tc-card-name">Priscilla W.</p>
+              <p class="tc-card-desig">cliente · martinique</p>
+            </button>
 
-          <!-- Doublons pour boucle seamless -->
-          <article class="apple-review-card" aria-hidden="true" style="--float-delay:0s">
-            <div class="apple-review-stars">★★★★★</div>
-            <p class="apple-review-text">"Un travail exceptionnel, vraiment à l'écoute. Mon tatouage tribal est exactement ce que j'avais imaginé, voire mieux. Je recommande sans hésiter !"</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Marie-Line T.</span>
-              <span class="apple-review-date">Il y a 2 semaines</span>
-            </footer>
-          </article>
+          </div>
+        </div>
 
-          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-1.5s">
-            <div class="apple-review-stars">★★★★★</div>
-            <p class="apple-review-text">"Cadre super agréable, artiste très professionnel. Le résultat est magnifique, les détails sont incroyables. Merci !"</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Kévin M.</span>
-              <span class="apple-review-date">Il y a 1 mois</span>
-            </footer>
-          </article>
-
-          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-0.8s">
-            <div class="apple-review-stars">★★★★★</div>
-            <p class="apple-review-text">"Je suis venue pour un fineline, je suis repartie avec une œuvre d'art. L'accueil est chaleureux et le studio très propre. Parfait !"</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Sandrine B.</span>
-              <span class="apple-review-date">Il y a 1 mois</span>
-            </footer>
-          </article>
-
-          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-2.2s">
-            <div class="apple-review-stars">★★★★★</div>
-            <p class="apple-review-text">"Mon premier tatouage et certainement pas le dernier. Le dessin proposé était au-delà de mes attentes. Ambiance zen, travail propre."</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Joëlle R.</span>
-              <span class="apple-review-date">Il y a 2 mois</span>
-            </footer>
-          </article>
-
-          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-3s">
-            <div class="apple-review-stars">★★★★★</div>
-            <p class="apple-review-text">"Super expérience du début à la fin. On sent que c'est une vraie passion. Mon maori sur l'épaule est une pièce unique."</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Thierry L.</span>
-              <span class="apple-review-date">Il y a 2 mois</span>
-            </footer>
-          </article>
-
-          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-1s">
-            <div class="apple-review-stars">★★★★★</div>
-            <p class="apple-review-text">"Accueil chaleureux, hygiène irréprochable, résultat bluffant. J'ai voyagé depuis Pointe-à-Pitre et je ne regrette pas du tout."</p>
-            <footer class="apple-review-author">
-              <span class="apple-review-name">Priscilla W.</span>
-              <span class="apple-review-date">Il y a 3 mois</span>
-            </footer>
-          </article>
-
+        <!-- Flèches navigation -->
+        <div class="tc-arrows">
+          <button class="tc-arrow" id="tc-left" aria-label="Précédent" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <button class="tc-arrow" id="tc-right" aria-label="Suivant">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
         </div>
       </div>
 
-      <div class="apple-reviews-cta reveal">
-        <a
-          href="https://share.google/4nmAHEpRC6CUGp8Pg"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-outline btn-pill"
-        >Voir les 27 avis Google</a>
+      <!-- CTA -->
+      <div class="tc-cta reveal">
+        <a href="https://share.google/4nmAHEpRC6CUGp8Pg" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-pill">Voir les 27 avis Google</a>
       </div>
     </section>
+
+    <!-- Modal avis étendu -->
+    <div class="tc-modal" id="tc-modal" role="dialog" aria-modal="true" aria-label="Avis détaillé" hidden>
+      <div class="tc-modal-backdrop" id="tc-modal-backdrop"></div>
+      <div class="tc-modal-inner" id="tc-modal-inner">
+        <button class="tc-modal-close" id="tc-modal-close" aria-label="Fermer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <p class="tc-modal-desig" id="tc-modal-desig"></p>
+        <p class="tc-modal-name" id="tc-modal-name"></p>
+        <div class="tc-modal-body">
+          <svg class="tc-modal-quote" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+          <p class="tc-modal-desc" id="tc-modal-desc"></p>
+        </div>
+      </div>
+    </div>
 
     <!-- ══════════════════════════════════════════
          9. PROCESS

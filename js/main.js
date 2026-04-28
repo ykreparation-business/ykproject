@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initContactForm();
   setActiveNav();
   initDragScroll();
+  initTestimonialCards();
 });
 
 /* ── Ink drop scroll progress ── */
@@ -319,6 +320,97 @@ function initDragScroll() {
     const walk = (x - startX) * 1.5;
     track.scrollLeft = scrollLeft - walk;
   });
+}
+
+/* ── Testimonial Cards carousel ── */
+function initTestimonialCards() {
+  const carousel  = document.getElementById('tc-carousel');
+  const leftBtn   = document.getElementById('tc-left');
+  const rightBtn  = document.getElementById('tc-right');
+  const modal     = document.getElementById('tc-modal');
+  const backdrop  = document.getElementById('tc-modal-backdrop');
+  const closeBtn  = document.getElementById('tc-modal-close');
+  const modalName = document.getElementById('tc-modal-name');
+  const modalDesig= document.getElementById('tc-modal-desig');
+  const modalDesc = document.getElementById('tc-modal-desc');
+  const cards     = document.querySelectorAll('.tc-card');
+
+  if (!carousel) return;
+
+  // Staggered entrance animation
+  const entranceObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.querySelectorAll('.tc-card').forEach((card, i) => {
+        setTimeout(() => card.classList.add('visible'), i * 150);
+      });
+      entranceObs.unobserve(e.target);
+    });
+  }, { threshold: 0.1 });
+  entranceObs.observe(carousel);
+
+  // Arrow scroll + state
+  const syncArrows = () => {
+    if (!leftBtn || !rightBtn) return;
+    leftBtn.disabled  = carousel.scrollLeft <= 2;
+    rightBtn.disabled = carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth - 2;
+  };
+  carousel.addEventListener('scroll', syncArrows, { passive: true });
+  syncArrows();
+
+  leftBtn?.addEventListener('click',  () => carousel.scrollBy({ left: -340, behavior: 'smooth' }));
+  rightBtn?.addEventListener('click', () => carousel.scrollBy({ left:  340, behavior: 'smooth' }));
+
+  // 3D tilt on hover
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    cards.forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        const y = (e.clientY - r.top)  / r.height - 0.5;
+        card.style.transform =
+          `perspective(900px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) rotate(${x * 2}deg) scale(1.03)`;
+        card.style.boxShadow = `${-x * 12}px ${-y * 12}px 40px rgba(0,0,0,0.35)`;
+        card.style.transition = 'box-shadow 0.1s ease';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform  = '';
+        card.style.boxShadow  = '';
+        card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
+      });
+    });
+  }
+
+  // Open modal on click
+  const openModal = card => {
+    if (!modal) return;
+    modalName.textContent  = card.dataset.name  + '.';
+    modalDesig.textContent = card.dataset.desig;
+    modalDesc.textContent  = card.dataset.desc;
+    modal.hidden = false;
+    const scrollY = window.scrollY;
+    document.body.style.cssText = `position:fixed;top:-${scrollY}px;width:100%;overflow:hidden`;
+    document.body.dataset.scrollY = scrollY;
+  };
+
+  const closeModal = () => {
+    if (!modal) return;
+    modal.hidden = true;
+    const scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
+    document.body.style.cssText = '';
+    window.scrollTo({ top: scrollY, behavior: 'instant' });
+  };
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => openModal(card));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card); }
+    });
+  });
+
+  closeBtn?.addEventListener('click', closeModal);
+  backdrop?.addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 }
 
 /* ── Active nav link ── */
