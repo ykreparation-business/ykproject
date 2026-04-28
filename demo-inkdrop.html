@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Démo — Goutte d'encre</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: oklch(14% 0.008 55);
+    font-family: 'Jost', system-ui, sans-serif;
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    padding: 3rem 1rem;
+  }
+
+  h1 { font-size: 1rem; letter-spacing: 0.15em; opacity: 0.4; text-transform: uppercase; }
+
+  /* ── Ink drop ── */
+  .inkdrop-progress {
+    position: relative;
+    width: 56px;
+  }
+
+  .inkdrop-progress svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    filter: drop-shadow(0 0 12px oklch(54% 0.15 42 / 0.6));
+  }
+
+  .inkdrop-outline {
+    fill: none;
+    stroke: oklch(54% 0.15 42 / 0.35);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+
+  .inkdrop-liquid rect,
+  .inkdrop-wave {
+    fill: oklch(54% 0.15 42);
+  }
+
+  @keyframes inkwave {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-20px); }
+  }
+
+  .inkdrop-wave {
+    animation: inkwave 2.6s linear infinite;
+  }
+
+  /* Demo: auto-fill animation */
+  @keyframes fill {
+    0%   { transform: translateY(52px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .inkdrop-liquid {
+    animation: fill 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  }
+
+  /* ── States row ── */
+  .states {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-end;
+  }
+
+  .state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .state span {
+    font-size: 0.7rem;
+    opacity: 0.4;
+    letter-spacing: 0.1em;
+  }
+
+  /* Static states */
+  .state .inkdrop-liquid { animation: none; }
+  .state-0  .inkdrop-liquid { transform: translateY(52px); }
+  .state-25 .inkdrop-liquid { transform: translateY(39px); }
+  .state-50 .inkdrop-liquid { transform: translateY(26px); }
+  .state-75 .inkdrop-liquid { transform: translateY(13px); }
+  .state-100 .inkdrop-liquid { transform: translateY(0px); }
+
+  .label {
+    font-size: 0.65rem;
+    opacity: 0.3;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 0.5rem;
+  }
+</style>
+</head>
+<body>
+
+  <h1>Goutte d'encre — Scroll Progress</h1>
+
+  <!-- Live animated demo -->
+  <div class="inkdrop-progress">
+    <svg viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="clip-live">
+          <path d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/>
+        </clipPath>
+      </defs>
+      <path class="inkdrop-outline" d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/>
+      <g clip-path="url(#clip-live)">
+        <g class="inkdrop-liquid">
+          <path class="inkdrop-wave" d="M-20 3 Q-15 -1,-10 3 Q-5 7,0 3 Q5 -1,10 3 Q15 7,20 3 Q25 -1,30 3 Q35 7,40 3 Q45 -1,50 3 L50 55 L-20 55 Z"/>
+          <rect x="-20" y="3" width="80" height="52"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <p class="label">Animation continue (simule le scroll)</p>
+
+  <!-- Static states -->
+  <div class="states">
+    <div class="state state-0">
+      <div class="inkdrop-progress" style="width:32px">
+        <svg viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg">
+          <defs><clipPath id="c0"><path d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/></clipPath></defs>
+          <path class="inkdrop-outline" d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/>
+          <g clip-path="url(#c0)"><g class="inkdrop-liquid"><path class="inkdrop-wave" d="M-20 3 Q-15 -1,-10 3 Q-5 7,0 3 Q5 -1,10 3 Q15 7,20 3 Q25 -1,30 3 Q35 7,40 3 Q45 -1,50 3 L50 55 L-20 55 Z"/><rect x="-20" y="3" width="80" height="52"/></g></g>
+        </svg>
+      </div>
+      <span>0%</span>
+    </div>
+
+    <div class="state state-25">
+      <div class="inkdrop-progress" style="width:32px">
+        <svg viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg">
+          <defs><clipPath id="c25"><path d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/></clipPath></defs>
+          <path class="inkdrop-outline" d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/>
+          <g clip-path="url(#c25)"><g class="inkdrop-liquid"><path class="inkdrop-wave" d="M-20 3 Q-15 -1,-10 3 Q-5 7,0 3 Q5 -1,10 3 Q15 7,20 3 Q25 -1,30 3 Q35 7,40 3 Q45 -1,50 3 L50 55 L-20 55 Z"/><rect x="-20" y="3" width="80" height="52"/></g></g>
+        </svg>
+      </div>
+      <span>25%</span>
+    </div>
+
+    <div class="state state-50">
+      <div class="inkdrop-progress" style="width:32px">
+        <svg viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg">
+          <defs><clipPath id="c50"><path d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/></clipPath></defs>
+          <path class="inkdrop-outline" d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/>
+          <g clip-path="url(#c50)"><g class="inkdrop-liquid"><path class="inkdrop-wave" d="M-20 3 Q-15 -1,-10 3 Q-5 7,0 3 Q5 -1,10 3 Q15 7,20 3 Q25 -1,30 3 Q35 7,40 3 Q45 -1,50 3 L50 55 L-20 55 Z"/><rect x="-20" y="3" width="80" height="52"/></g></g>
+        </svg>
+      </div>
+      <span>50%</span>
+    </div>
+
+    <div class="state state-75">
+      <div class="inkdrop-progress" style="width:32px">
+        <svg viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg">
+          <defs><clipPath id="c75"><path d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/></clipPath></defs>
+          <path class="inkdrop-outline" d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/>
+          <g clip-path="url(#c75)"><g class="inkdrop-liquid"><path class="inkdrop-wave" d="M-20 3 Q-15 -1,-10 3 Q-5 7,0 3 Q5 -1,10 3 Q15 7,20 3 Q25 -1,30 3 Q35 7,40 3 Q45 -1,50 3 L50 55 L-20 55 Z"/><rect x="-20" y="3" width="80" height="52"/></g></g>
+        </svg>
+      </div>
+      <span>75%</span>
+    </div>
+
+    <div class="state state-100">
+      <div class="inkdrop-progress" style="width:32px">
+        <svg viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg">
+          <defs><clipPath id="c100"><path d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/></clipPath></defs>
+          <path class="inkdrop-outline" d="M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z"/>
+          <g clip-path="url(#c100)"><g class="inkdrop-liquid"><path class="inkdrop-wave" d="M-20 3 Q-15 -1,-10 3 Q-5 7,0 3 Q5 -1,10 3 Q15 7,20 3 Q25 -1,30 3 Q35 7,40 3 Q45 -1,50 3 L50 55 L-20 55 Z"/><rect x="-20" y="3" width="80" height="52"/></g></g>
+        </svg>
+      </div>
+      <span>100%</span>
+    </div>
+  </div>
+
+</body>
+</html>
