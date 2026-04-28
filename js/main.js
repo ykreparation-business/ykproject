@@ -1,11 +1,55 @@
 document.addEventListener('DOMContentLoaded', () => {
+  initScrollProgress();
   initNav();
   initReveal();
+  initHeroParallax();
   initLightbox();
   initPortfolioFilters();
   initContactForm();
   setActiveNav();
 });
+
+/* ── Ink drop scroll progress ── */
+function initScrollProgress() {
+  const drop = document.createElement('div');
+  drop.className = 'inkdrop-progress';
+  drop.setAttribute('aria-hidden', 'true');
+
+  // Drop silhouette: tip at bottom (20,50), circle top centered (20,15) r=14
+  const PATH = 'M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z';
+  // Wave: period 20px, amplitude ±3px — translateX(-20px) for seamless loop
+  const WAVE = 'M-20 3 Q-15 -1,-10 3 Q-5 7,0 3 Q5 -1,10 3 Q15 7,20 3 Q25 -1,30 3 Q35 7,40 3 Q45 -1,50 3 L50 55 L-20 55 Z';
+
+  drop.innerHTML = `
+    <svg viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="inkdrop-clip">
+          <path d="${PATH}"/>
+        </clipPath>
+      </defs>
+      <path class="inkdrop-outline" d="${PATH}"/>
+      <g clip-path="url(#inkdrop-clip)" class="inkdrop-liquid" style="transform:translateY(52px)">
+        <path class="inkdrop-wave" d="${WAVE}"/>
+        <rect x="-20" y="3" width="80" height="52"/>
+      </g>
+    </svg>
+  `;
+  document.body.prepend(drop);
+
+  const liquid = drop.querySelector('.inkdrop-liquid');
+
+  const update = () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = total > 0 ? scrolled / total : 0;
+    if (scrolled > 80) drop.classList.add('visible');
+    // translateY: 52 = empty (liquid below viewBox), 0 = full
+    liquid.style.transform = `translateY(${(1 - progress) * 52}px)`;
+  };
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+}
 
 /* ── Navigation ── */
 function initNav() {
@@ -34,7 +78,6 @@ function initNav() {
     });
   });
 
-  // Close on Escape
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && links.classList.contains('open')) {
       links.classList.remove('open');
@@ -47,8 +90,19 @@ function initNav() {
 
 /* ── Scroll reveals ── */
 function initReveal() {
-  const els = document.querySelectorAll('.reveal');
-  if (!els.length) return;
+  // Upgrade service panels to directional reveals
+  document.querySelector('.service--tattoo')?.classList.replace('reveal', 'reveal-left');
+  document.querySelector('.service--massage')?.classList.replace('reveal', 'reveal-right');
+
+  // Upgrade work/portfolio items to scale reveals with stagger
+  document.querySelectorAll('.work-item, .portfolio-item').forEach((el, i) => {
+    el.classList.add('reveal-scale');
+    el.style.transitionDelay = `${i * 70}ms`;
+  });
+
+  // Observe all reveal variants
+  const selectors = '.reveal, .reveal-left, .reveal-right, .reveal-scale';
+  const els = document.querySelectorAll(selectors);
 
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -62,7 +116,30 @@ function initReveal() {
   els.forEach(el => obs.observe(el));
 }
 
-/* ── Lightbox (shared: homepage + portfolio) ── */
+/* ── Hero parallax ── */
+function initHeroParallax() {
+  const heroBg = document.querySelector('.hero-bg img');
+  if (!heroBg) return;
+
+  // Skip on reduced motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  heroBg.style.willChange = 'transform';
+
+  const onScroll = () => {
+    const scrollY = window.scrollY;
+    const heroH   = document.querySelector('.hero')?.offsetHeight || window.innerHeight;
+    if (scrollY > heroH) return;
+    // Move bg at 40% of scroll speed = depth effect
+    heroBg.style.transform = `translateY(${scrollY * 0.4}px) scale(1.15)`;
+  };
+
+  // Initial scale to prevent letterboxing during parallax
+  heroBg.style.transform = 'translateY(0) scale(1.15)';
+  window.addEventListener('scroll', onScroll, { passive: true });
+}
+
+/* ── Lightbox ── */
 function initLightbox() {
   const items = document.querySelectorAll('.work-item, .portfolio-item');
   if (!items.length) return;
@@ -120,9 +197,11 @@ function initPortfolioFilters() {
       btn.setAttribute('aria-pressed', 'true');
 
       const cat = btn.dataset.filter;
-      items.forEach(item => {
+      items.forEach((item, i) => {
         const matches = cat === 'all' || item.dataset.category === cat;
         item.classList.toggle('hidden', !matches);
+        // Re-stagger visible items
+        if (matches) item.style.transitionDelay = `${i * 60}ms`;
       });
     });
   });
@@ -147,11 +226,13 @@ function initContactForm() {
 
     let valid = true;
     inputs.forEach(input => { if (!validateField(input)) valid = false; });
-    if (!valid) { form.querySelector('.field.error input, .field.error select, .field.error textarea')?.focus(); return; }
+    if (!valid) {
+      form.querySelector('.field.error input, .field.error select, .field.error textarea')?.focus();
+      return;
+    }
 
     const btn = form.querySelector('[type="submit"]');
     btn.disabled = true;
-    const original = btn.textContent;
     btn.textContent = 'Envoi…';
 
     await new Promise(r => setTimeout(r, 900));

@@ -1035,8 +1035,85 @@ footer {
 .footer-links a:hover { color: var(--text-muted); }
 
 /* ================================
+   INK DROP SCROLL PROGRESS
+================================ */
+.inkdrop-progress {
+  position: fixed;
+  right: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  z-index: calc(var(--z-nav) + 1);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.inkdrop-progress.visible {
+  opacity: 1;
+}
+
+.inkdrop-progress svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 8px oklch(54% 0.15 42 / 0.5));
+}
+
+.inkdrop-outline {
+  fill: none;
+  stroke: oklch(54% 0.15 42 / 0.3);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.inkdrop-liquid rect,
+.inkdrop-wave {
+  fill: var(--accent);
+}
+
+.inkdrop-liquid {
+  will-change: transform;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes inkwave {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-20px); }
+}
+
+.inkdrop-wave {
+  animation: inkwave 2.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inkdrop-wave { animation: none; }
+  .inkdrop-liquid { transition: none; }
+}
+
+@media (max-width: 480px) {
+  .inkdrop-progress { display: none; }
+}
+
+/* ================================
+   HERO ENTRANCE SEQUENCE
+================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-content .hero-logo     { animation: fadeUp 1s var(--ease-out-expo) 0.1s both; }
+.hero-content .hero-tagline  { animation: fadeUp 1s var(--ease-out-expo) 0.3s both; }
+.hero-content .hero-location { animation: fadeUp 1s var(--ease-out-expo) 0.48s both; }
+.hero-content .hero-actions  { animation: fadeUp 1s var(--ease-out-expo) 0.62s both; }
+.hero-scroll                 { animation: fadeUp 1s var(--ease-out-expo) 0.95s both; }
+
+/* ================================
    REVEAL ANIMATIONS
 ================================ */
+
+/* Base reveal — fade + rise */
 .reveal {
   opacity: 0;
   transform: translateY(28px);
@@ -1049,6 +1126,59 @@ footer {
   transform: translateY(0);
 }
 
+/* Directional — services slide from sides */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-56px);
+  transition:
+    opacity 0.8s var(--ease-out-expo),
+    transform 0.8s var(--ease-out-expo);
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(56px);
+  transition:
+    opacity 0.8s var(--ease-out-expo),
+    transform 0.8s var(--ease-out-expo);
+}
+.reveal-left.visible,
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scale reveal — portfolio / work items */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92) translateY(16px);
+  transition:
+    opacity 0.65s var(--ease-out-quart),
+    transform 0.65s var(--ease-out-quart);
+}
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Eyebrow accent line that draws in */
+.section-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  vertical-align: middle;
+  margin-right: 0;
+  transition: width 0.9s var(--ease-out-expo), margin-right 0.9s var(--ease-out-expo);
+}
+.reveal.visible .section-eyebrow::before,
+.reveal-left.visible .section-eyebrow::before,
+.reveal-right.visible .section-eyebrow::before {
+  width: 24px;
+  margin-right: var(--space-3);
+}
+
+/* Stagger delays */
 .reveal-delay-1 { transition-delay: 80ms; }
 .reveal-delay-2 { transition-delay: 160ms; }
 .reveal-delay-3 { transition-delay: 240ms; }
@@ -1057,10 +1187,23 @@ footer {
 
 @media (prefers-reduced-motion: reduce) {
   .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale,
+  .hero-content .hero-logo,
+  .hero-content .hero-tagline,
+  .hero-content .hero-location,
+  .hero-content .hero-actions,
+  .hero-scroll,
   .hero-scroll-line {
     animation: none;
     opacity: 1;
     transform: none;
+    transition: none;
+  }
+  .section-eyebrow::before {
+    width: 24px;
+    margin-right: var(--space-3);
     transition: none;
   }
 }
