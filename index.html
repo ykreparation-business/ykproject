@@ -256,39 +256,120 @@
         </div>
       </div>
 
-      <div class="apple-reviews-grid reveal reveal-delay-1">
-        <article class="apple-review-card">
-          <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
-          <p class="apple-review-text">
-            "Un travail exceptionnel, vraiment à l'écoute. Mon tatouage tribal est exactement ce que j'avais imaginé, voire mieux. Je recommande sans hésiter !"
-          </p>
-          <footer class="apple-review-author">
-            <span class="apple-review-name">Marie-Line T.</span>
-            <span class="apple-review-date">Il y a 2 semaines</span>
-          </footer>
-        </article>
+      <!-- Carrousel infini flottant -->
+      <div class="apple-reviews-carousel" aria-label="Carousel des avis">
+        <div class="apple-reviews-track">
 
-        <article class="apple-review-card">
-          <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
-          <p class="apple-review-text">
-            "Cadre super agréable, artiste très professionnel. Le résultat est magnifique, les détails sont incroyables. Merci !"
-          </p>
-          <footer class="apple-review-author">
-            <span class="apple-review-name">Kévin M.</span>
-            <span class="apple-review-date">Il y a 1 mois</span>
-          </footer>
-        </article>
+          <article class="apple-review-card" style="--float-delay:0s">
+            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
+            <p class="apple-review-text">"Un travail exceptionnel, vraiment à l'écoute. Mon tatouage tribal est exactement ce que j'avais imaginé, voire mieux. Je recommande sans hésiter !"</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Marie-Line T.</span>
+              <span class="apple-review-date">Il y a 2 semaines</span>
+            </footer>
+          </article>
 
-        <article class="apple-review-card">
-          <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
-          <p class="apple-review-text">
-            "Je suis venue pour un fineline, je suis repartie avec une œuvre d'art. L'accueil est chaleureux et le studio très propre. Parfait !"
-          </p>
-          <footer class="apple-review-author">
-            <span class="apple-review-name">Sandrine B.</span>
-            <span class="apple-review-date">Il y a 1 mois</span>
-          </footer>
-        </article>
+          <article class="apple-review-card" style="--float-delay:-1.5s">
+            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
+            <p class="apple-review-text">"Cadre super agréable, artiste très professionnel. Le résultat est magnifique, les détails sont incroyables. Merci !"</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Kévin M.</span>
+              <span class="apple-review-date">Il y a 1 mois</span>
+            </footer>
+          </article>
+
+          <article class="apple-review-card" style="--float-delay:-0.8s">
+            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
+            <p class="apple-review-text">"Je suis venue pour un fineline, je suis repartie avec une œuvre d'art. L'accueil est chaleureux et le studio très propre. Parfait !"</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Sandrine B.</span>
+              <span class="apple-review-date">Il y a 1 mois</span>
+            </footer>
+          </article>
+
+          <article class="apple-review-card" style="--float-delay:-2.2s">
+            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
+            <p class="apple-review-text">"Mon premier tatouage et certainement pas le dernier. Le dessin proposé était au-delà de mes attentes. Ambiance zen, travail propre."</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Joëlle R.</span>
+              <span class="apple-review-date">Il y a 2 mois</span>
+            </footer>
+          </article>
+
+          <article class="apple-review-card" style="--float-delay:-3s">
+            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
+            <p class="apple-review-text">"Super expérience du début à la fin. On sent que c'est une vraie passion. Mon maori sur l'épaule est une pièce unique."</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Thierry L.</span>
+              <span class="apple-review-date">Il y a 2 mois</span>
+            </footer>
+          </article>
+
+          <article class="apple-review-card" style="--float-delay:-1s">
+            <div class="apple-review-stars" aria-label="5 étoiles">★★★★★</div>
+            <p class="apple-review-text">"Accueil chaleureux, hygiène irréprochable, résultat bluffant. J'ai voyagé depuis Pointe-à-Pitre et je ne regrette pas du tout."</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Priscilla W.</span>
+              <span class="apple-review-date">Il y a 3 mois</span>
+            </footer>
+          </article>
+
+          <!-- Doublons pour boucle seamless -->
+          <article class="apple-review-card" aria-hidden="true" style="--float-delay:0s">
+            <div class="apple-review-stars">★★★★★</div>
+            <p class="apple-review-text">"Un travail exceptionnel, vraiment à l'écoute. Mon tatouage tribal est exactement ce que j'avais imaginé, voire mieux. Je recommande sans hésiter !"</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Marie-Line T.</span>
+              <span class="apple-review-date">Il y a 2 semaines</span>
+            </footer>
+          </article>
+
+          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-1.5s">
+            <div class="apple-review-stars">★★★★★</div>
+            <p class="apple-review-text">"Cadre super agréable, artiste très professionnel. Le résultat est magnifique, les détails sont incroyables. Merci !"</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Kévin M.</span>
+              <span class="apple-review-date">Il y a 1 mois</span>
+            </footer>
+          </article>
+
+          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-0.8s">
+            <div class="apple-review-stars">★★★★★</div>
+            <p class="apple-review-text">"Je suis venue pour un fineline, je suis repartie avec une œuvre d'art. L'accueil est chaleureux et le studio très propre. Parfait !"</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Sandrine B.</span>
+              <span class="apple-review-date">Il y a 1 mois</span>
+            </footer>
+          </article>
+
+          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-2.2s">
+            <div class="apple-review-stars">★★★★★</div>
+            <p class="apple-review-text">"Mon premier tatouage et certainement pas le dernier. Le dessin proposé était au-delà de mes attentes. Ambiance zen, travail propre."</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Joëlle R.</span>
+              <span class="apple-review-date">Il y a 2 mois</span>
+            </footer>
+          </article>
+
+          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-3s">
+            <div class="apple-review-stars">★★★★★</div>
+            <p class="apple-review-text">"Super expérience du début à la fin. On sent que c'est une vraie passion. Mon maori sur l'épaule est une pièce unique."</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Thierry L.</span>
+              <span class="apple-review-date">Il y a 2 mois</span>
+            </footer>
+          </article>
+
+          <article class="apple-review-card" aria-hidden="true" style="--float-delay:-1s">
+            <div class="apple-review-stars">★★★★★</div>
+            <p class="apple-review-text">"Accueil chaleureux, hygiène irréprochable, résultat bluffant. J'ai voyagé depuis Pointe-à-Pitre et je ne regrette pas du tout."</p>
+            <footer class="apple-review-author">
+              <span class="apple-review-name">Priscilla W.</span>
+              <span class="apple-review-date">Il y a 3 mois</span>
+            </footer>
+          </article>
+
+        </div>
       </div>
 
       <div class="apple-reviews-cta reveal">
