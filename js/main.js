@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initContactForm();
   setActiveNav();
   initDragScroll();
-  initTestimonialCards();
+  initReviewsCarousel();
 });
 
 /* ── Ink drop scroll progress ── */
@@ -322,7 +322,25 @@ function initDragScroll() {
   });
 }
 
-/* ── Testimonial Cards carousel ── */
+/* ── Reviews carousel (cartes blanches) ── */
+function initReviewsCarousel() {
+  const carousel = document.getElementById('rv-carousel');
+  if (!carousel) return;
+
+  // Staggered entrance
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.querySelectorAll('.rv-card').forEach((card, i) => {
+        setTimeout(() => card.classList.add('visible'), i * 100);
+      });
+      obs.unobserve(e.target);
+    });
+  }, { threshold: 0.1 });
+  obs.observe(carousel);
+}
+
+/* ── Testimonial Cards carousel (legacy, kept for safety) ── */
 function initTestimonialCards() {
   const carousel  = document.getElementById('tc-carousel');
   const leftBtn   = document.getElementById('tc-left');
