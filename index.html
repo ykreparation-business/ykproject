@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/apple-home.css">
 </head>
 <body>
 
@@ -36,34 +37,31 @@
     </ul>
   </nav>
 
-  <!-- HERO -->
   <main id="main">
-    <section class="hero" aria-label="Présentation du studio">
-      <div class="hero-bg" aria-hidden="true">
+
+    <!-- ══════════════════════════════════════════
+         1. HERO — Cinématique, typographie massive
+    ══════════════════════════════════════════ -->
+    <section class="apple-hero" aria-label="Présentation du studio">
+
+      <div class="apple-hero-media" aria-hidden="true">
         <img
-          src="https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?auto=format&fit=crop&w=1920&q=80"
+          src="https://images.unsplash.com/photo-1589782182703-2aaa69037b5b?auto=format&fit=crop&w=1920&q=80"
           alt=""
           loading="eager"
           fetchpriority="high"
         >
       </div>
 
-      <div class="hero-content">
-        <img
-          class="hero-logo reveal"
-          src="assets/logo.png"
-          alt="La Goutte d'Encre — Studio Tattoo / Massage bien-être"
-        >
-
-        <p class="hero-tagline reveal reveal-delay-1">
-          L'art du tatouage et du soin,<br>posé avec intention.
-        </p>
-
-        <p class="hero-location reveal reveal-delay-2">Guadeloupe, Antilles françaises</p>
-
-        <div class="hero-actions reveal reveal-delay-3">
-          <a href="portfolio.html" class="btn btn-outline">Voir les réalisations</a>
-          <a href="contact.html" class="btn btn-primary">Réserver une séance</a>
+      <div class="apple-hero-content">
+        <span class="apple-chip">Studio · Guadeloupe</span>
+        <h1 class="apple-hero-headline">
+          La Goutte<br>d'Encre.
+        </h1>
+        <p class="apple-hero-sub">Tatouage sur mesure &amp; massage bien-être</p>
+        <div class="apple-hero-actions">
+          <a href="portfolio.html" class="btn btn-primary btn-pill">Voir les créations</a>
+          <a href="contact.html" class="btn btn-outline btn-pill">Réserver une séance</a>
         </div>
       </div>
 
@@ -72,58 +70,129 @@
       </div>
     </section>
 
-    <!-- INTRO -->
-    <section class="intro reveal" aria-label="À propos du studio">
-      <p class="intro-text">
-        <strong>La Goutte d'Encre</strong> est un studio guadeloupéen dédié à deux arts du soin :
-        le tatouage, précis et permanent, et le massage bien-être, profond et réparateur.
-        Chaque séance est pensée pour vous, dans un espace calme, à votre rythme.
+    <!-- ══════════════════════════════════════════
+         2. RIBBON — défilement continu
+    ══════════════════════════════════════════ -->
+    <div class="apple-ribbon" aria-hidden="true">
+      <div class="apple-ribbon-track">
+        <span>Tatouage sur mesure</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Tribal &amp; Maori</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Fineline</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Noir &amp; Gris</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Massage bien-être</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Guadeloupe</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Caribéen</span>
+        <span class="apple-ribbon-dot">·</span>
+        <!-- repeat for seamless loop -->
+        <span>Tatouage sur mesure</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Tribal &amp; Maori</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Fineline</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Noir &amp; Gris</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Massage bien-être</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Guadeloupe</span>
+        <span class="apple-ribbon-dot">·</span>
+        <span>Caribéen</span>
+        <span class="apple-ribbon-dot">·</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         3. PITCH — déclaration éditoriale large
+    ══════════════════════════════════════════ -->
+    <section class="apple-pitch reveal" aria-label="À propos du studio">
+      <p class="apple-pitch-text">
+        <span class="apple-pitch-highlight">La Goutte d'Encre</span> est un studio guadeloupéen
+        dédié à deux arts du soin : le tatouage, précis et permanent, et le massage bien-être,
+        profond et réparateur. Chaque séance est pensée pour vous, dans un espace calme,
+        à votre rythme.
       </p>
     </section>
 
-    <!-- SERVICES -->
-    <section class="services" aria-label="Nos services">
-      <div class="services-grid">
-        <div class="service service--tattoo reveal">
-          <span class="service-label">01 — Tatouage</span>
-          <h2 class="service-name">Studio<br>Tattoo</h2>
-          <p class="service-desc">
-            Créations sur mesure, tribal, maori et caribéen, finelines et noir &amp; gris.
-            Chaque motif est dessiné pour votre peau, votre histoire.
-          </p>
-          <a href="portfolio.html" class="service-link">
-            Voir les réalisations
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M3 8h10M9 4l4 4-4 4"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="service service--massage reveal reveal-delay-1">
-          <span class="service-label">02 — Bien-être</span>
-          <h2 class="service-name">Massage<br>Bien-être</h2>
-          <p class="service-desc">
-            Massages relaxants et énergisants, adaptés à votre corps et votre rythme.
-            Un espace pour ralentir, respirer, revenir à soi.
-          </p>
-          <a href="tarifs.html#massage" class="service-link">
-            Découvrir les soins
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M3 8h10M9 4l4 4-4 4"/>
-            </svg>
-          </a>
-        </div>
+    <!-- ══════════════════════════════════════════
+         4. STATS — trois grands chiffres
+    ══════════════════════════════════════════ -->
+    <section class="apple-stats" aria-label="Chiffres clés">
+      <div class="apple-stat reveal">
+        <span class="apple-stat-number">100%</span>
+        <span class="apple-stat-label">Sur mesure</span>
+      </div>
+      <div class="apple-stat-divider" aria-hidden="true"></div>
+      <div class="apple-stat reveal reveal-delay-1">
+        <span class="apple-stat-number">+500</span>
+        <span class="apple-stat-label">Créations réalisées</span>
+      </div>
+      <div class="apple-stat-divider" aria-hidden="true"></div>
+      <div class="apple-stat reveal reveal-delay-2">
+        <span class="apple-stat-number">2</span>
+        <span class="apple-stat-label">Arts du soin</span>
       </div>
     </section>
 
-    <!-- WORK PREVIEW -->
-    <section class="work-preview" aria-label="Aperçu des réalisations">
-      <div class="work-header reveal">
+    <!-- ══════════════════════════════════════════
+         5. PANEL 1 — Studio Tattoo
+    ══════════════════════════════════════════ -->
+    <section class="apple-panel apple-panel--dark" aria-label="Studio Tattoo">
+      <div class="apple-panel-media">
+        <img
+          src="https://images.unsplash.com/photo-1590556409324-aa1d726e5c3c?auto=format&fit=crop&w=1200&q=80"
+          alt="Tatouage tribal sur avant-bras"
+          loading="lazy"
+        >
+      </div>
+      <div class="apple-panel-content reveal-right">
+        <span class="section-eyebrow">01 — Tatouage</span>
+        <h2 class="apple-panel-headline">Studio<br>Tattoo</h2>
+        <p class="apple-panel-desc">
+          Créations sur mesure, tribal, maori et caribéen, finelines et noir&nbsp;&amp;&nbsp;gris.
+          Chaque motif est dessiné pour votre peau, votre histoire.
+        </p>
+        <a href="portfolio.html" class="btn btn-outline btn-pill">Voir les réalisations</a>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         6. PANEL 2 — Massage Bien-être
+    ══════════════════════════════════════════ -->
+    <section class="apple-panel apple-panel--surface apple-panel--reverse" aria-label="Massage bien-être">
+      <div class="apple-panel-media">
+        <img
+          src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=80"
+          alt="Massage bien-être relaxant"
+          loading="lazy"
+        >
+      </div>
+      <div class="apple-panel-content reveal-left">
+        <span class="section-eyebrow">02 — Bien-être</span>
+        <h2 class="apple-panel-headline">Massage<br>Bien-être</h2>
+        <p class="apple-panel-desc">
+          Massages relaxants et énergisants, adaptés à votre corps et votre rythme.
+          Un espace pour ralentir, respirer, revenir à soi.
+        </p>
+        <a href="tarifs.html#massage" class="btn btn-outline btn-pill">Découvrir les soins</a>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         7. GALLERY — aperçu des travaux
+    ══════════════════════════════════════════ -->
+    <section class="apple-gallery" aria-label="Aperçu des réalisations">
+      <div class="apple-gallery-header reveal">
         <div>
           <span class="section-eyebrow">Réalisations</span>
           <h2 class="section-title">Quelques travaux</h2>
         </div>
-        <a href="portfolio.html" class="btn btn-outline">Portfolio complet</a>
+        <a href="portfolio.html" class="btn btn-outline btn-pill">Portfolio complet</a>
       </div>
 
       <div class="work-grid reveal reveal-delay-1">
@@ -165,16 +234,55 @@
       </div>
     </section>
 
-    <!-- CTA BLOCK -->
-    <section class="cta-block reveal" aria-label="Prise de contact">
-      <span class="section-eyebrow">Votre projet</span>
-      <h2 class="section-title">Prêt pour votre séance ?</h2>
-      <p class="section-lead" style="margin-inline: auto; margin-bottom: var(--space-8);">
+    <!-- ══════════════════════════════════════════
+         8. PROCESS — comment ça se passe
+    ══════════════════════════════════════════ -->
+    <section class="apple-process" aria-label="Notre processus">
+      <div class="apple-process-header reveal">
+        <span class="section-eyebrow">Le processus</span>
+        <h2 class="section-title">Comment ça se passe</h2>
+      </div>
+
+      <div class="apple-process-steps">
+        <div class="apple-step reveal">
+          <span class="apple-step-num">01</span>
+          <h3>Votre idée</h3>
+          <p>Partagez votre projet par message ou lors d'une consultation gratuite.</p>
+        </div>
+        <div class="apple-step reveal reveal-delay-1">
+          <span class="apple-step-num">02</span>
+          <h3>Le dessin</h3>
+          <p>Un motif unique est créé sur mesure, adapté à votre peau et votre histoire.</p>
+        </div>
+        <div class="apple-step reveal reveal-delay-2">
+          <span class="apple-step-num">03</span>
+          <h3>La séance</h3>
+          <p>Dans un espace calme, à votre rythme, votre tatouage ou soin prend vie.</p>
+        </div>
+        <div class="apple-step reveal reveal-delay-3">
+          <span class="apple-step-num">04</span>
+          <h3>Le suivi</h3>
+          <p>Conseils de cicatrisation et suivi personnalisé pour un résultat impeccable.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         9. CTA FINAL — appel à l'action
+    ══════════════════════════════════════════ -->
+    <section class="apple-cta reveal" aria-label="Prise de contact">
+      <span class="apple-chip">Votre projet</span>
+      <h2 class="apple-cta-headline">Prêt pour<br>votre séance&nbsp;?</h2>
+      <p class="apple-cta-sub">
         Tatouage ou massage, partagez-nous votre idée.
         Nous vous répondons sous 48h.
       </p>
-      <a href="contact.html" class="btn btn-primary">Réserver une séance</a>
+      <div class="apple-cta-actions">
+        <a href="contact.html" class="btn btn-primary btn-pill">Réserver une séance</a>
+        <a href="tarifs.html" class="btn btn-outline btn-pill">Voir les tarifs</a>
+      </div>
     </section>
+
   </main>
 
   <!-- FOOTER -->

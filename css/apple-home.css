@@ -1,0 +1,427 @@
+/* ============================================================
+   APPLE-INSPIRED DESIGN LAYER — La Goutte d'Encre · index
+   Extends style.css without overriding shared tokens
+============================================================ */
+
+/* ── Pill button variant ── */
+.btn-pill { border-radius: 980px; }
+
+/* ── Chip / badge label ── */
+.apple-chip {
+  display: inline-block;
+  background: oklch(24% 0.05 42 / 0.55);
+  border: 1px solid oklch(44% 0.1 42 / 0.35);
+  color: oklch(72% 0.12 42);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 980px;
+  margin-bottom: var(--space-6);
+}
+
+/* ============================================================
+   HERO — cinematic, full-bleed, pure black
+============================================================ */
+.apple-hero {
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  padding: var(--space-16) var(--space-8) var(--space-24);
+}
+
+.apple-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.apple-hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  filter: brightness(0.32) saturate(0.45);
+  will-change: transform;
+  transform: scale(1.12);
+  transition: transform 14s ease;
+}
+
+.apple-hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    oklch(4% 0.004 55 / 55%) 0%,
+    transparent 30%,
+    oklch(4% 0.004 55 / 55%) 72%,
+    oklch(4% 0.004 55) 100%
+  );
+}
+
+.apple-hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 960px;
+  width: 100%;
+}
+
+.apple-hero-headline {
+  font-family: var(--font-display);
+  font-size: clamp(5.5rem, 15vw, 13rem);
+  letter-spacing: 0.04em;
+  line-height: 0.9;
+  color: #ffffff;
+  margin-bottom: var(--space-8);
+}
+
+.apple-hero-sub {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: oklch(68% 0.006 60);
+  margin-bottom: var(--space-8);
+}
+
+.apple-hero-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--space-8);
+}
+
+/* ============================================================
+   RIBBON — scrolling marquee
+============================================================ */
+.apple-ribbon {
+  background: oklch(10% 0.005 55);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: var(--space-4) 0;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.apple-ribbon-track {
+  display: inline-flex;
+  gap: var(--space-10, 2.5rem);
+  animation: ribbonScroll 22s linear infinite;
+}
+
+.apple-ribbon-track span {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.apple-ribbon-dot { color: var(--accent) !important; }
+
+@keyframes ribbonScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apple-ribbon-track { animation: none; }
+}
+
+/* ============================================================
+   PITCH — large editorial statement
+============================================================ */
+.apple-pitch {
+  padding: var(--space-32) var(--space-8);
+  max-width: 980px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.apple-pitch-text {
+  font-family: var(--font-body);
+  font-size: clamp(1.3rem, 3.2vw, 2.3rem);
+  font-weight: 200;
+  line-height: 1.55;
+  letter-spacing: -0.008em;
+  color: var(--text-muted);
+}
+
+.apple-pitch-highlight {
+  color: var(--text);
+  font-weight: 400;
+}
+
+/* ============================================================
+   STATS — three big numbers
+============================================================ */
+.apple-stats {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr 1px 1fr;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+
+.apple-stat {
+  padding: var(--space-16) var(--space-8);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.apple-stat-divider {
+  background: var(--border-subtle);
+}
+
+.apple-stat-number {
+  font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
+  font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  background: linear-gradient(130deg, var(--text) 20%, oklch(60% 0.14 42) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.apple-stat-label {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   FEATURE PANELS — full-bleed editorial sections
+============================================================ */
+.apple-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 75vh;
+  overflow: hidden;
+}
+
+.apple-panel--dark    { background: oklch(9% 0.006 55); }
+.apple-panel--surface { background: var(--bg-surface); }
+
+.apple-panel--reverse .apple-panel-content { order: -1; }
+
+.apple-panel-media {
+  position: relative;
+  overflow: hidden;
+}
+
+.apple-panel-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease-out-quart);
+}
+
+.apple-panel:hover .apple-panel-media img { transform: scale(1.04); }
+
+.apple-panel-content {
+  padding: var(--space-24) var(--space-16);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-8);
+}
+
+.apple-panel-headline {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.apple-panel-desc {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: 200;
+  color: var(--text-muted);
+  max-width: 40ch;
+  line-height: 1.7;
+}
+
+/* ============================================================
+   GALLERY — reuses work-grid, adds header spacing
+============================================================ */
+.apple-gallery {
+  padding: var(--space-24) var(--space-8);
+}
+
+.apple-gallery-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: var(--space-12);
+  gap: var(--space-8);
+}
+
+/* ============================================================
+   PROCESS — 4 numbered steps
+============================================================ */
+.apple-process {
+  padding: var(--space-24) var(--space-8);
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.apple-process-header {
+  text-align: center;
+  margin-bottom: var(--space-16);
+}
+
+.apple-process-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+.apple-step {
+  padding: var(--space-8) var(--space-6);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  transition: border-color var(--dur-base) var(--ease-out-quart);
+}
+
+.apple-step:hover { border-color: var(--border); }
+
+.apple-step-num {
+  font-family: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px oklch(54% 0.15 42 / 0.35);
+}
+
+.apple-step h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  font-weight: 400;
+}
+
+.apple-step p {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+/* ============================================================
+   FINAL CTA — bold centered block
+============================================================ */
+.apple-cta {
+  padding: var(--space-32) var(--space-8);
+  text-align: center;
+  background: oklch(6% 0.005 55);
+  position: relative;
+  overflow: hidden;
+}
+
+.apple-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, oklch(32% 0.1 42 / 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.apple-cta-headline {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 9vw, 8rem);
+  letter-spacing: 0.04em;
+  line-height: 0.95;
+  color: #fff;
+  margin: var(--space-8) 0;
+  position: relative;
+}
+
+.apple-cta-sub {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: 200;
+  color: var(--text-muted);
+  max-width: 50ch;
+  margin-inline: auto;
+  margin-bottom: var(--space-12);
+  line-height: 1.65;
+  position: relative;
+}
+
+.apple-cta-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 960px) {
+  .apple-panel {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .apple-panel-media { height: 55vw; min-height: 300px; }
+  .apple-panel--reverse .apple-panel-content { order: 0; }
+  .apple-panel-content { padding: var(--space-12) var(--space-6); }
+
+  .apple-stats {
+    grid-template-columns: 1fr;
+  }
+  .apple-stat-divider { height: 1px; width: 100%; }
+
+  .apple-process-steps { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .apple-hero-headline { font-size: clamp(4rem, 18vw, 6rem); }
+  .apple-hero-actions { flex-direction: column; align-items: center; }
+
+  .apple-pitch { padding: var(--space-16) var(--space-4); }
+
+  .apple-process-steps { grid-template-columns: 1fr; }
+
+  .apple-gallery-header { flex-direction: column; align-items: flex-start; }
+
+  .apple-cta-headline { font-size: clamp(2.8rem, 12vw, 4.5rem); }
+  .apple-cta-actions { flex-direction: column; align-items: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apple-hero-media img { transition: none; }
+  .apple-panel-media img { transition: none; }
+  .apple-panel:hover .apple-panel-media img { transform: none; }
+}

@@ -120,24 +120,25 @@ function initReveal() {
 
 /* ── Hero parallax ── */
 function initHeroParallax() {
-  const heroBg = document.querySelector('.hero-bg img');
+  // Support both legacy .hero-bg and new .apple-hero-media
+  const heroBg = document.querySelector('.hero-bg img') || document.querySelector('.apple-hero-media img');
   if (!heroBg) return;
 
-  // Skip on reduced motion
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   heroBg.style.willChange = 'transform';
 
+  const heroEl  = document.querySelector('.hero, .apple-hero');
+  const initialScale = heroBg.closest('.apple-hero-media') ? 1.12 : 1.15;
+
   const onScroll = () => {
     const scrollY = window.scrollY;
-    const heroH   = document.querySelector('.hero')?.offsetHeight || window.innerHeight;
+    const heroH   = heroEl?.offsetHeight || window.innerHeight;
     if (scrollY > heroH) return;
-    // Move bg at 40% of scroll speed = depth effect
-    heroBg.style.transform = `translateY(${scrollY * 0.4}px) scale(1.15)`;
+    heroBg.style.transform = `translateY(${scrollY * 0.35}px) scale(${initialScale})`;
   };
 
-  // Initial scale to prevent letterboxing during parallax
-  heroBg.style.transform = 'translateY(0) scale(1.15)';
+  heroBg.style.transform = `translateY(0) scale(${initialScale})`;
   window.addEventListener('scroll', onScroll, { passive: true });
 }
 
