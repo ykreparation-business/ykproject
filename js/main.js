@@ -28,9 +28,11 @@ function initScrollProgress() {
         </clipPath>
       </defs>
       <path class="inkdrop-outline" d="${PATH}"/>
-      <g clip-path="url(#inkdrop-clip)" class="inkdrop-liquid" style="transform:translateY(52px)">
-        <path class="inkdrop-wave" d="${WAVE}"/>
-        <rect x="-20" y="3" width="80" height="52"/>
+      <g clip-path="url(#inkdrop-clip)">
+        <g class="inkdrop-liquid" style="transform:translateY(52px)">
+          <path class="inkdrop-wave" d="${WAVE}"/>
+          <rect x="-20" y="3" width="80" height="52"/>
+        </g>
       </g>
     </svg>
   `;
