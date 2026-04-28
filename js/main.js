@@ -322,12 +322,83 @@ function initDragScroll() {
   });
 }
 
-/* ── Reviews carousel (cartes blanches) ── */
+/* ── Reviews carousel — Google Places API ── */
+
+// 🔧 À configurer :
+const GOOGLE_PLACE_ID = 'YOUR_PLACE_ID';  // ex: ChIJxxxxxxxxxxxxxxxxx
+const GOOGLE_API_KEY  = 'YOUR_API_KEY';   // clé Maps JavaScript API
+
 function initReviewsCarousel() {
   const carousel = document.getElementById('rv-carousel');
   if (!carousel) return;
 
-  // Staggered entrance
+  // Si l'API et le Place ID sont configurés → charge les vrais avis
+  if (
+    GOOGLE_PLACE_ID !== 'YOUR_PLACE_ID' &&
+    GOOGLE_API_KEY  !== 'YOUR_API_KEY'  &&
+    typeof google !== 'undefined'
+  ) {
+    loadGoogleReviews(carousel);
+  } else {
+    // Sinon → animation d'entrée sur les avis statiques
+    animateCards(carousel);
+  }
+}
+
+function loadGoogleReviews(carousel) {
+  // Nœud invisible requis par le SDK Google
+  const dummy = document.createElement('div');
+  document.body.appendChild(dummy);
+
+  const service = new google.maps.places.PlacesService(dummy);
+
+  service.getDetails(
+    {
+      placeId: GOOGLE_PLACE_ID,
+      fields: ['reviews', 'rating', 'user_ratings_total'],
+      language: 'fr',
+    },
+    (place, status) => {
+      dummy.remove();
+      if (status !== google.maps.places.PlacesServiceStatus.OK || !place?.reviews?.length) {
+        animateCards(carousel); // fallback sur avis statiques
+        return;
+      }
+
+      // Met à jour le score global
+      const scoreEl = carousel.closest('.rv-section')?.querySelector('.rv-score-number');
+      if (scoreEl && place.rating) scoreEl.textContent = place.rating.toFixed(1);
+
+      // Reconstruit la piste avec les vrais avis
+      const track = carousel.querySelector('.rv-track');
+      if (!track) return;
+      track.innerHTML = '';
+
+      const reviews = place.reviews.slice(0, 8); // max 8 avis Google gratuits
+      reviews.forEach(r => {
+        const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+        const card  = document.createElement('article');
+        card.className = 'rv-card';
+        card.innerHTML = `
+          <div class="rv-card-top">
+            <img class="rv-avatar" src="${r.profile_photo_url}" alt="${r.author_name}" loading="lazy" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(r.author_name)}&background=e8e8e8&color=555&size=44'">
+            <div>
+              <p class="rv-name">${r.author_name}</p>
+              <p class="rv-date">${r.relative_time_description}</p>
+            </div>
+          </div>
+          <div class="rv-stars" aria-label="${r.rating} étoiles sur 5">${stars}</div>
+          <p class="rv-text">${r.text || '–'}</p>
+        `;
+        track.appendChild(card);
+      });
+
+      animateCards(carousel);
+    }
+  );
+}
+
+function animateCards(carousel) {
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (!e.isIntersecting) return;
