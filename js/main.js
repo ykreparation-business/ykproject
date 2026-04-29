@@ -1,34 +1,40 @@
 document.addEventListener('DOMContentLoaded', () => {
-  initScrollProgress();
+  initPreloader();
   initNav();
-  initReveal();
+  initCustomCursor();
+  initParticleHero();
+  init3DReveal();
+  init3DTilt();
+  initDragScroll();
+  initCounters();
   initHeroParallax();
   initLightbox();
   initPortfolioFilters();
   initContactForm();
   setActiveNav();
-  initDragScroll();
-  initReviewsCarousel();
+  initScrollProgress();
 });
+
+/* ── Preloader ── */
+function initPreloader() {
+  const el = document.getElementById('preloader');
+  if (!el) return;
+  window.addEventListener('load', () => {
+    setTimeout(() => el.classList.add('done'), 1400);
+  });
+  setTimeout(() => el.classList.add('done'), 3000);
+}
 
 /* ── Ink drop scroll progress ── */
 function initScrollProgress() {
   const drop = document.createElement('div');
   drop.className = 'inkdrop-progress';
   drop.setAttribute('aria-hidden', 'true');
-
-  // Drop silhouette: tip at bottom (20,50), circle top centered (20,15) r=14
   const PATH = 'M20 50 C6 42,2 28,6 15 A14 14 0 1 1 34 15 C38 28,34 42,20 50 Z';
-  // Wave: period 20px, amplitude ±3px — translateX(-20px) for seamless loop
   const WAVE = 'M-20 3 Q-15 -1,-10 3 Q-5 7,0 3 Q5 -1,10 3 Q15 7,20 3 Q25 -1,30 3 Q35 7,40 3 Q45 -1,50 3 L50 55 L-20 55 Z';
-
   drop.innerHTML = `
     <svg viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <clipPath id="inkdrop-clip">
-          <path d="${PATH}"/>
-        </clipPath>
-      </defs>
+      <defs><clipPath id="inkdrop-clip"><path d="${PATH}"/></clipPath></defs>
       <path class="inkdrop-outline" d="${PATH}"/>
       <g clip-path="url(#inkdrop-clip)">
         <g class="inkdrop-liquid" style="transform:translateY(52px)">
@@ -36,21 +42,14 @@ function initScrollProgress() {
           <rect x="-20" y="3" width="80" height="52"/>
         </g>
       </g>
-    </svg>
-  `;
+    </svg>`;
   document.body.prepend(drop);
-
   const liquid = drop.querySelector('.inkdrop-liquid');
-
   const update = () => {
-    const scrolled = window.scrollY;
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = total > 0 ? scrolled / total : 0;
-    if (scrolled > 80) drop.classList.add('visible');
-    // translateY: 52 = empty (liquid below viewBox), 0 = full
-    liquid.style.transform = `translateY(${(1 - progress) * 52}px)`;
+    const p = window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    if (window.scrollY > 80) drop.classList.add('visible');
+    liquid.style.transform = `translateY(${(1 - p) * 52}px)`;
   };
-
   window.addEventListener('scroll', update, { passive: true });
   update();
 }
@@ -59,7 +58,6 @@ function initScrollProgress() {
 function initNav() {
   const nav = document.querySelector('.nav');
   if (!nav) return;
-
   const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 60);
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
@@ -73,80 +71,205 @@ function initNav() {
     toggle.setAttribute('aria-expanded', open);
     document.body.style.overflow = open ? 'hidden' : '';
   });
-
-  links.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      links.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-    });
-  });
-
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    links.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }));
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && links.classList.contains('open')) {
       links.classList.remove('open');
       toggle.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
-      toggle.focus();
     }
   });
 }
 
-/* ── Scroll reveals ── */
-function initReveal() {
-  // Upgrade service panels to directional reveals
-  document.querySelector('.service--tattoo')?.classList.replace('reveal', 'reveal-left');
-  document.querySelector('.service--massage')?.classList.replace('reveal', 'reveal-right');
+/* ── Custom ink cursor ── */
+function initCustomCursor() {
+  const dot  = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  if (!dot || !ring) return;
+  if (window.matchMedia('(pointer: coarse)').matches) return;
 
-  // Upgrade work/portfolio items to scale reveals with stagger
-  document.querySelectorAll('.work-item, .portfolio-item').forEach((el, i) => {
-    el.classList.add('reveal-scale');
-    el.style.transitionDelay = `${i * 70}ms`;
-  });
+  let cx = -100, cy = -100, rx = -100, ry = -100;
 
-  // Observe all reveal variants
-  const selectors = '.reveal, .reveal-left, .reveal-right, .reveal-scale';
-  const els = document.querySelectorAll(selectors);
+  document.addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; });
 
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        obs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+  (function loop() {
+    dot.style.left  = cx + 'px';
+    dot.style.top   = cy + 'px';
+    rx += (cx - rx) * 0.12;
+    ry += (cy - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
+}
 
-  els.forEach(el => obs.observe(el));
+/* ── Canvas 2D particle hero ── */
+function initParticleHero() {
+  const canvas = document.getElementById('hero-canvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  let W, H, mx, my;
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    mx = W / 2; my = H / 2;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  const COLORS = ['#d4691e', '#e8830a', '#f0ebe4', '#8a7d6e', '#b05a18'];
+  const N = 220;
+
+  class Particle {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x     = Math.random() * (W || 1920);
+      this.y     = init ? Math.random() * (H || 1080) : (Math.random() < .5 ? -10 : (H || 1080) + 10);
+      this.z     = Math.random() * 2 + 0.2;
+      this.baseR = (Math.random() * 1.8 + 0.3) * this.z;
+      this.vx    = (Math.random() - 0.5) * 0.25 * this.z;
+      this.vy    = (Math.random() - 0.5) * 0.25 * this.z;
+      this.alpha = (Math.random() * 0.45 + 0.08) * this.z;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.phase = Math.random() * Math.PI * 2;
+      this.speed = Math.random() * 0.5 + 0.3;
+    }
+    update(t) {
+      const parallaxX = (mx - W / 2) * 0.00015 * this.z;
+      const parallaxY = (my - H / 2) * 0.00015 * this.z;
+      this.x += this.vx + parallaxX;
+      this.y += this.vy + parallaxY;
+      this.r  = this.baseR * (0.8 + 0.2 * Math.sin(t * this.speed + this.phase));
+      if (this.x < -20 || this.x > W + 20 || this.y < -20 || this.y > H + 20) this.reset(false);
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.alpha;
+      ctx.fill();
+    }
+  }
+
+  const particles = Array.from({ length: N }, () => new Particle());
+
+  let then = 0;
+  (function loop(ts) {
+    requestAnimationFrame(loop);
+    const t = ts * 0.001;
+    const dt = t - then; then = t;
+    if (dt > 0.1) return;
+
+    ctx.globalAlpha = 0.18;
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 1;
+
+    particles.forEach(p => { p.update(t); p.draw(); });
+  })(0);
 }
 
 /* ── Hero parallax ── */
 function initHeroParallax() {
-  // Support both legacy .hero-bg and new .apple-hero-media
-  const heroBg = document.querySelector('.hero-bg img') || document.querySelector('.apple-hero-media img');
-  if (!heroBg) return;
+  const bg = document.getElementById('hero-bg');
+  if (!bg || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y > window.innerHeight) return;
+    bg.style.transform = `scale(1.08) translateY(${y * 0.25}px)`;
+  }, { passive: true });
+}
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+/* ── 3D Reveal on scroll ── */
+function init3DReveal() {
+  const classes = '.reveal-3d, .reveal-left, .reveal-right, .reveal-scale';
+  const els = document.querySelectorAll(classes);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => obs.observe(el));
+}
 
-  heroBg.style.willChange = 'transform';
+/* ── 3D Tilt on [data-tilt] elements ── */
+function init3DTilt() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  document.querySelectorAll('[data-tilt]').forEach(el => {
+    el.style.transition = 'transform 0.1s ease';
+    el.addEventListener('mousemove', e => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      el.style.transform =
+        `perspective(900px) rotateX(${-y * 10}deg) rotateY(${x * 10}deg) scale3d(1.02,1.02,1.02)`;
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+      el.style.transform  = 'perspective(900px) rotateX(0) rotateY(0) scale3d(1,1,1)';
+    });
+    el.addEventListener('mouseenter', () => {
+      el.style.transition = 'transform 0.1s ease';
+    });
+  });
+}
 
-  const heroEl  = document.querySelector('.hero, .apple-hero');
-  const initialScale = heroBg.closest('.apple-hero-media') ? 1.12 : 1.15;
+/* ── Counter animation ── */
+function initCounters() {
+  const counters = document.querySelectorAll('.counter[data-target]');
+  if (!counters.length) return;
 
-  const onScroll = () => {
-    const scrollY = window.scrollY;
-    const heroH   = heroEl?.offsetHeight || window.innerHeight;
-    if (scrollY > heroH) return;
-    heroBg.style.transform = `translateY(${scrollY * 0.35}px) scale(${initialScale})`;
-  };
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el      = e.target;
+      const target  = parseFloat(el.dataset.target);
+      const decimal = parseInt(el.dataset.decimal || '0');
+      const dur     = 1800;
+      const start   = performance.now();
 
-  heroBg.style.transform = `translateY(0) scale(${initialScale})`;
-  window.addEventListener('scroll', onScroll, { passive: true });
+      (function tick(now) {
+        const p = Math.min((now - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = (target * ease).toFixed(decimal);
+        if (p < 1) requestAnimationFrame(tick);
+        else el.textContent = target.toFixed(decimal);
+      })(start);
+
+      obs.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+
+  counters.forEach(c => obs.observe(c));
+}
+
+/* ── Drag scroll gallery ── */
+function initDragScroll() {
+  const tracks = document.querySelectorAll('.gallery-track, .apple-scroll-track');
+  tracks.forEach(track => {
+    let isDown = false, startX, scrollLeft;
+    track.addEventListener('mousedown',  e => { isDown = true; startX = e.pageX - track.offsetLeft; scrollLeft = track.scrollLeft; track.style.cursor = 'grabbing'; });
+    track.addEventListener('mouseleave', ()  => { isDown = false; track.style.cursor = ''; });
+    track.addEventListener('mouseup',    ()  => { isDown = false; track.style.cursor = ''; });
+    track.addEventListener('mousemove',  e => {
+      if (!isDown) return;
+      e.preventDefault();
+      track.scrollLeft = scrollLeft - (e.pageX - track.offsetLeft - startX) * 1.5;
+    });
+  });
 }
 
 /* ── Lightbox ── */
 function initLightbox() {
-  const items = document.querySelectorAll('.work-item, .portfolio-item');
+  const items = document.querySelectorAll('.gallery-item, .portfolio-item');
   if (!items.length) return;
 
   const dialog = document.createElement('dialog');
@@ -156,33 +279,23 @@ function initLightbox() {
     <div class="lightbox-inner">
       <img class="lightbox-img" src="" alt="">
       <button class="lightbox-close" aria-label="Fermer">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M15 5L5 15M5 5l10 10"/>
         </svg>
       </button>
-    </div>
-  `;
+    </div>`;
   document.body.appendChild(dialog);
-
   const img = dialog.querySelector('.lightbox-img');
 
   items.forEach(item => {
     const src = item.querySelector('img');
     if (!src) return;
-    item.setAttribute('role', 'button');
     item.setAttribute('tabindex', '0');
+    item.setAttribute('role', 'button');
     item.setAttribute('aria-label', `Voir : ${src.alt}`);
-
-    const open = () => {
-      img.src = src.src;
-      img.alt = src.alt;
-      dialog.showModal();
-    };
-
+    const open = () => { img.src = src.src; img.alt = src.alt; dialog.showModal(); };
     item.addEventListener('click', open);
-    item.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
-    });
+    item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
   });
 
   dialog.querySelector('.lightbox-close').addEventListener('click', () => dialog.close());
@@ -198,15 +311,12 @@ function initPortfolioFilters() {
   btns.forEach(btn => {
     btn.addEventListener('click', () => {
       btns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-      btn.classList.add('active');
-      btn.setAttribute('aria-pressed', 'true');
-
+      btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true');
       const cat = btn.dataset.filter;
       items.forEach((item, i) => {
-        const matches = cat === 'all' || item.dataset.category === cat;
-        item.classList.toggle('hidden', !matches);
-        // Re-stagger visible items
-        if (matches) item.style.transitionDelay = `${i * 60}ms`;
+        const show = cat === 'all' || item.dataset.category === cat;
+        item.classList.toggle('hidden', !show);
+        if (show) item.style.transitionDelay = `${i * 60}ms`;
       });
     });
   });
@@ -216,32 +326,19 @@ function initPortfolioFilters() {
 function initContactForm() {
   const form = document.querySelector('.contact-form');
   if (!form) return;
-
   const inputs = form.querySelectorAll('input, textarea, select');
-
   inputs.forEach(input => {
-    input.addEventListener('blur', () => validateField(input));
-    input.addEventListener('input', () => {
-      if (input.closest('.field')?.classList.contains('error')) validateField(input);
-    });
+    input.addEventListener('blur',  () => validateField(input));
+    input.addEventListener('input', () => { if (input.closest('.field')?.classList.contains('error')) validateField(input); });
   });
-
   form.addEventListener('submit', async e => {
     e.preventDefault();
-
     let valid = true;
-    inputs.forEach(input => { if (!validateField(input)) valid = false; });
-    if (!valid) {
-      form.querySelector('.field.error input, .field.error select, .field.error textarea')?.focus();
-      return;
-    }
-
+    inputs.forEach(i => { if (!validateField(i)) valid = false; });
+    if (!valid) { form.querySelector('.field.error input, .field.error select, .field.error textarea')?.focus(); return; }
     const btn = form.querySelector('[type="submit"]');
-    btn.disabled = true;
-    btn.textContent = 'Envoi…';
-
+    btn.disabled = true; btn.textContent = 'Envoi…';
     await new Promise(r => setTimeout(r, 900));
-
     form.closest('.contact-form-wrap').innerHTML = `
       <div class="form-success">
         <div class="form-success-icon" aria-hidden="true">
@@ -251,262 +348,29 @@ function initContactForm() {
         </div>
         <p class="form-success-title">Votre demande est bien reçue.</p>
         <p class="form-success-text">Nous vous contactons sous 48h pour confirmer votre séance.</p>
-      </div>
-    `;
+      </div>`;
   });
 }
 
 function validateField(input) {
   const field = input.closest('.field');
   if (!field) return true;
-
   const errEl = field.querySelector('.field-error');
-  const empty = !input.value.trim();
-
-  if (input.required && empty) {
-    setError(field, errEl, getMsg(input));
-    return false;
-  }
-
-  if (input.type === 'email' && input.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
-    setError(field, errEl, 'Adresse email invalide.');
-    return false;
-  }
-
+  if (input.required && !input.value.trim()) { setError(field, errEl, getMsg(input)); return false; }
+  if (input.type === 'email' && input.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) { setError(field, errEl, 'Adresse email invalide.'); return false; }
   clearError(field, errEl);
   return true;
 }
-
-function setError(field, errEl, msg) {
-  field.classList.add('error');
-  if (errEl) { errEl.textContent = msg; errEl.setAttribute('role', 'alert'); }
-}
-
-function clearError(field, errEl) {
-  field.classList.remove('error');
-  if (errEl) { errEl.textContent = ''; errEl.removeAttribute('role'); }
-}
-
+function setError(f, e, m) { f.classList.add('error'); if (e) { e.textContent = m; e.setAttribute('role','alert'); } }
+function clearError(f, e) { f.classList.remove('error'); if (e) { e.textContent = ''; e.removeAttribute('role'); } }
 function getMsg(input) {
-  const msgs = {
-    name:    'Votre nom est nécessaire pour vous recontacter.',
-    email:   'Votre email est nécessaire pour vous recontacter.',
-    phone:   'Votre numéro est nécessaire.',
-    service: 'Veuillez choisir un service.',
-    message: 'Décrivez votre projet — même en quelques mots.',
-  };
-  return msgs[input.name] || 'Ce champ est requis.';
+  return { name:'Votre nom est nécessaire.', email:'Votre email est nécessaire.', phone:'Votre numéro est nécessaire.', service:'Veuillez choisir un service.', message:'Décrivez votre projet.' }[input.name] || 'Ce champ est requis.';
 }
 
-/* ── Drag scroll galerie ── */
-function initDragScroll() {
-  const track = document.querySelector('.apple-scroll-track');
-  if (!track) return;
-
-  let isDown = false;
-  let startX, scrollLeft;
-
-  track.addEventListener('mousedown', e => {
-    isDown = true;
-    startX = e.pageX - track.offsetLeft;
-    scrollLeft = track.scrollLeft;
-  });
-  track.addEventListener('mouseleave', () => { isDown = false; });
-  track.addEventListener('mouseup',    () => { isDown = false; });
-  track.addEventListener('mousemove',  e => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x    = e.pageX - track.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    track.scrollLeft = scrollLeft - walk;
-  });
-}
-
-/* ── Reviews carousel — Google Places API ── */
-
-// 🔧 À configurer :
-const GOOGLE_PLACE_ID = 'YOUR_PLACE_ID';  // ex: ChIJxxxxxxxxxxxxxxxxx
-const GOOGLE_API_KEY  = 'YOUR_API_KEY';   // clé Maps JavaScript API
-
-function initReviewsCarousel() {
-  const carousel = document.getElementById('rv-carousel');
-  if (!carousel) return;
-
-  // Si l'API et le Place ID sont configurés → charge les vrais avis
-  if (
-    GOOGLE_PLACE_ID !== 'YOUR_PLACE_ID' &&
-    GOOGLE_API_KEY  !== 'YOUR_API_KEY'  &&
-    typeof google !== 'undefined'
-  ) {
-    loadGoogleReviews(carousel);
-  } else {
-    // Sinon → animation d'entrée sur les avis statiques
-    animateCards(carousel);
-  }
-}
-
-function loadGoogleReviews(carousel) {
-  // Nœud invisible requis par le SDK Google
-  const dummy = document.createElement('div');
-  document.body.appendChild(dummy);
-
-  const service = new google.maps.places.PlacesService(dummy);
-
-  service.getDetails(
-    {
-      placeId: GOOGLE_PLACE_ID,
-      fields: ['reviews', 'rating', 'user_ratings_total'],
-      language: 'fr',
-    },
-    (place, status) => {
-      dummy.remove();
-      if (status !== google.maps.places.PlacesServiceStatus.OK || !place?.reviews?.length) {
-        animateCards(carousel); // fallback sur avis statiques
-        return;
-      }
-
-      // Met à jour le score global
-      const scoreEl = carousel.closest('.rv-section')?.querySelector('.rv-score-number');
-      if (scoreEl && place.rating) scoreEl.textContent = place.rating.toFixed(1);
-
-      // Reconstruit la piste avec les vrais avis
-      const track = carousel.querySelector('.rv-track');
-      if (!track) return;
-      track.innerHTML = '';
-
-      const reviews = place.reviews.slice(0, 8); // max 8 avis Google gratuits
-      reviews.forEach(r => {
-        const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-        const card  = document.createElement('article');
-        card.className = 'rv-card';
-        card.innerHTML = `
-          <div class="rv-card-top">
-            <img class="rv-avatar" src="${r.profile_photo_url}" alt="${r.author_name}" loading="lazy" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(r.author_name)}&background=e8e8e8&color=555&size=44'">
-            <div>
-              <p class="rv-name">${r.author_name}</p>
-              <p class="rv-date">${r.relative_time_description}</p>
-            </div>
-          </div>
-          <div class="rv-stars" aria-label="${r.rating} étoiles sur 5">${stars}</div>
-          <p class="rv-text">${r.text || '–'}</p>
-        `;
-        track.appendChild(card);
-      });
-
-      animateCards(carousel);
-    }
-  );
-}
-
-function animateCards(carousel) {
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      e.target.querySelectorAll('.rv-card').forEach((card, i) => {
-        setTimeout(() => card.classList.add('visible'), i * 100);
-      });
-      obs.unobserve(e.target);
-    });
-  }, { threshold: 0.1 });
-  obs.observe(carousel);
-}
-
-/* ── Testimonial Cards carousel (legacy, kept for safety) ── */
-function initTestimonialCards() {
-  const carousel  = document.getElementById('tc-carousel');
-  const leftBtn   = document.getElementById('tc-left');
-  const rightBtn  = document.getElementById('tc-right');
-  const modal     = document.getElementById('tc-modal');
-  const backdrop  = document.getElementById('tc-modal-backdrop');
-  const closeBtn  = document.getElementById('tc-modal-close');
-  const modalName = document.getElementById('tc-modal-name');
-  const modalDesig= document.getElementById('tc-modal-desig');
-  const modalDesc = document.getElementById('tc-modal-desc');
-  const cards     = document.querySelectorAll('.tc-card');
-
-  if (!carousel) return;
-
-  // Staggered entrance animation
-  const entranceObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      e.target.querySelectorAll('.tc-card').forEach((card, i) => {
-        setTimeout(() => card.classList.add('visible'), i * 150);
-      });
-      entranceObs.unobserve(e.target);
-    });
-  }, { threshold: 0.1 });
-  entranceObs.observe(carousel);
-
-  // Arrow scroll + state
-  const syncArrows = () => {
-    if (!leftBtn || !rightBtn) return;
-    leftBtn.disabled  = carousel.scrollLeft <= 2;
-    rightBtn.disabled = carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth - 2;
-  };
-  carousel.addEventListener('scroll', syncArrows, { passive: true });
-  syncArrows();
-
-  leftBtn?.addEventListener('click',  () => carousel.scrollBy({ left: -340, behavior: 'smooth' }));
-  rightBtn?.addEventListener('click', () => carousel.scrollBy({ left:  340, behavior: 'smooth' }));
-
-  // 3D tilt on hover
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    cards.forEach(card => {
-      card.addEventListener('mousemove', e => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width  - 0.5;
-        const y = (e.clientY - r.top)  / r.height - 0.5;
-        card.style.transform =
-          `perspective(900px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) rotate(${x * 2}deg) scale(1.03)`;
-        card.style.boxShadow = `${-x * 12}px ${-y * 12}px 40px rgba(0,0,0,0.35)`;
-        card.style.transition = 'box-shadow 0.1s ease';
-      });
-      card.addEventListener('mouseleave', () => {
-        card.style.transform  = '';
-        card.style.boxShadow  = '';
-        card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
-      });
-    });
-  }
-
-  // Open modal on click
-  const openModal = card => {
-    if (!modal) return;
-    modalName.textContent  = card.dataset.name  + '.';
-    modalDesig.textContent = card.dataset.desig;
-    modalDesc.textContent  = card.dataset.desc;
-    modal.hidden = false;
-    const scrollY = window.scrollY;
-    document.body.style.cssText = `position:fixed;top:-${scrollY}px;width:100%;overflow:hidden`;
-    document.body.dataset.scrollY = scrollY;
-  };
-
-  const closeModal = () => {
-    if (!modal) return;
-    modal.hidden = true;
-    const scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
-    document.body.style.cssText = '';
-    window.scrollTo({ top: scrollY, behavior: 'instant' });
-  };
-
-  cards.forEach(card => {
-    card.addEventListener('click', () => openModal(card));
-    card.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card); }
-    });
-  });
-
-  closeBtn?.addEventListener('click', closeModal);
-  backdrop?.addEventListener('click', closeModal);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-}
-
-/* ── Active nav link ── */
+/* ── Active nav ── */
 function setActiveNav() {
   const page = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-links a').forEach(a => {
-    const href = a.getAttribute('href');
-    a.classList.toggle('active', href === page || (page === '' && href === 'index.html'));
+    a.classList.toggle('active', a.getAttribute('href') === page || (page === '' && a.getAttribute('href') === 'index.html'));
   });
 }

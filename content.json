@@ -1,0 +1,68 @@
+{
+  "site": {
+    "name": "La Goutte d'Encre",
+    "email": "contact@lagoutedencre.gp",
+    "phone": "+590 690 54 56 41",
+    "address": "Zac de Fort-Île · Goyave 97128",
+    "instagram": "https://www.instagram.com/la_goutte_d_encre_/",
+    "google_reviews_url": "https://share.google/4nmAHEpRC6CUGp8Pg"
+  },
+  "hero": {
+    "badge": "Studio Tattoo · Goyave, Guadeloupe",
+    "title": "La Goutte\nd'Encre.",
+    "subtitle": "L'art du tatouage sur mesure",
+    "cta_primary": "Voir les créations",
+    "cta_secondary": "Réserver une séance",
+    "image": "https://images.unsplash.com/photo-1589782182703-2aaa69037b5b?auto=format&fit=crop&w=1920&q=80"
+  },
+  "pitch": "La Goutte d'Encre est un studio guadeloupéen dédié à l'art du tatouage. Chaque création est unique, dessinée sur mesure pour votre peau, votre histoire. Un espace calme, à Goyave, pour un tatouage qui vous ressemble vraiment.",
+  "stats": [
+    { "value": "100%", "label": "Sur mesure" },
+    { "value": "+500", "label": "Créations réalisées" },
+    { "value": "5.0★", "label": "Note Google · 27 avis" }
+  ],
+  "panel": {
+    "image": "https://images.unsplash.com/photo-1590556409324-aa1d726e5c3c?auto=format&fit=crop&w=1200&q=80",
+    "image_alt": "Tatouage tribal sur avant-bras",
+    "title": "L'art\nsur peau.",
+    "desc": "Tribal, maori et caribéen, finelines, noir & gris, géométrique. Chaque motif est dessiné pour votre peau, votre histoire."
+  },
+  "video": {
+    "src": "assets/studio.mp4",
+    "poster": "https://images.unsplash.com/photo-1590556409324-aa1d726e5c3c?auto=format&fit=crop&w=1920&q=60"
+  },
+  "gallery": [
+    { "src": "https://images.unsplash.com/photo-1590556409324-aa1d726e5c3c?auto=format&fit=crop&w=600&h=750&q=80", "alt": "Tatouage tribal avant-bras" },
+    { "src": "https://images.unsplash.com/photo-1611501275019-9b5cda994fa4?auto=format&fit=crop&w=600&h=750&q=80", "alt": "Motif maori épaule" },
+    { "src": "https://images.unsplash.com/photo-1598030473953-b0b9bb7e56e5?auto=format&fit=crop&w=600&h=750&q=80", "alt": "Fineline poignet" },
+    { "src": "https://images.unsplash.com/photo-1617220730022-d75ba7e7ced3?auto=format&fit=crop&w=600&h=750&q=80", "alt": "Noir et gris dos" },
+    { "src": "https://images.unsplash.com/photo-1603145733146-ae562a55031e?auto=format&fit=crop&w=600&h=750&q=80", "alt": "Géométrique bras" },
+    { "src": "https://images.unsplash.com/photo-1564182842519-8a3b2af3e228?auto=format&fit=crop&w=600&h=750&q=80", "alt": "Tatouage détaillé" },
+    { "src": "https://images.unsplash.com/photo-1542451542907-6b82e3831e0c?auto=format&fit=crop&w=600&h=750&q=80", "alt": "Tatouage japonais" }
+  ],
+  "reviews": [
+    { "name": "Marie-Line T.", "date": "Il y a 2 semaines", "rating": 5, "text": "Super expérience avec cette artiste talentueuse et très à l'écoute ! Mon tribal est exactement ce que j'avais imaginé. Je recommande à 200% !", "avatar": "https://i.pravatar.cc/150?img=47" },
+    { "name": "Kévin M.", "date": "Il y a 1 mois", "rating": 5, "text": "Merci pour tout. Je recommande ! Cadre super agréable, artiste très professionnel. Le résultat est magnifique.", "avatar": "https://i.pravatar.cc/150?img=12" },
+    { "name": "Sandrine B.", "date": "Il y a 1 mois", "rating": 5, "text": "Je suis venue pour un fineline, je suis repartie avec une œuvre d'art. L'accueil est chaleureux et le studio très propre. Parfait !", "avatar": "https://i.pravatar.cc/150?img=32" },
+    { "name": "Joëlle R.", "date": "Il y a 2 mois", "rating": 5, "text": "Mon premier tatouage et certainement pas le dernier. Le dessin proposé était au-delà de mes attentes. Ambiance zen, travail propre.", "avatar": "https://i.pravatar.cc/150?img=25" },
+    { "name": "Thierry L.", "date": "Il y a 2 mois", "rating": 5, "text": "Super expérience du début à la fin. On sent que c'est une vraie passion. Mon maori sur l'épaule est une pièce unique.", "avatar": "https://i.pravatar.cc/150?img=8" },
+    { "name": "Priscilla W.", "date": "Il y a 3 mois", "rating": 5, "text": "Accueil chaleureux, hygiène irréprochable, résultat bluffant. J'ai voyagé depuis la Martinique et je ne regrette pas du tout !", "avatar": "https://i.pravatar.cc/150?img=44" }
+  ],
+  "process": [
+    { "step": "01", "title": "Votre idée", "desc": "Partagez votre projet par message ou lors d'une consultation gratuite." },
+    { "step": "02", "title": "Le dessin", "desc": "Un motif unique est créé sur mesure, adapté à votre peau et votre histoire." },
+    { "step": "03", "title": "La séance", "desc": "Dans un espace calme à Goyave, à votre rythme, votre tatouage prend vie." },
+    { "step": "04", "title": "Le suivi", "desc": "Conseils de cicatrisation et suivi personnalisé pour un résultat impeccable." }
+  ],
+  "portfolio": [
+    { "src": "https://images.unsplash.com/photo-1590556409324-aa1d726e5c3c?auto=format&fit=crop&w=700&q=80", "alt": "Tatouage tribal maori avant-bras", "label": "Tribal — Avant-bras", "category": "tattoo" },
+    { "src": "https://images.unsplash.com/photo-1611501275019-9b5cda994fa4?auto=format&fit=crop&w=700&q=80", "alt": "Motif maori épaule et haut du bras", "label": "Maori — Épaule", "category": "tattoo" },
+    { "src": "https://images.unsplash.com/photo-1598030473953-b0b9bb7e56e5?auto=format&fit=crop&w=700&q=80", "alt": "Fineline noir et gris poignet", "label": "Fineline — Poignet", "category": "tattoo" },
+    { "src": "https://images.unsplash.com/photo-1617220730022-d75ba7e7ced3?auto=format&fit=crop&w=700&q=80", "alt": "Grand tatouage noir et gris sur le dos", "label": "Noir & Gris — Dos", "category": "tattoo" },
+    { "src": "https://images.unsplash.com/photo-1603145733146-ae562a55031e?auto=format&fit=crop&w=700&q=80", "alt": "Tatouage géométrique sur le bras", "label": "Géométrique — Bras", "category": "tattoo" },
+    { "src": "https://images.unsplash.com/photo-1564156280315-1d42b4651629?auto=format&fit=crop&w=700&q=80", "alt": "Tatouage tribal cheville", "label": "Tribal — Cheville", "category": "tattoo" },
+    { "src": "https://images.unsplash.com/photo-1600334089648-17097680ad9c?auto=format&fit=crop&w=700&q=80", "alt": "Soin massage bien-être au studio", "label": "Massage relaxant", "category": "massage" },
+    { "src": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=700&q=80", "alt": "Ambiance soin bien-être lumière chaude", "label": "Rituel bien-être", "category": "massage" },
+    { "src": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=700&q=80", "alt": "Tatouage fineline portrait", "label": "Fineline — Portrait", "category": "tattoo" }
+  ]
+}
