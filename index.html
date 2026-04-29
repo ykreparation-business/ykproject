@@ -9,6 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
 </head>
 <body>
 
@@ -40,12 +43,24 @@
   <main id="main">
     <section class="hero" aria-label="Présentation du studio">
       <div class="hero-bg" aria-hidden="true">
-        <img
-          src="https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?auto=format&fit=crop&w=1920&q=80"
-          alt=""
-          loading="eager"
-          fetchpriority="high"
-        >
+        <div class="hero-bg-layer hero-bg-far">
+          <img
+            src="https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?auto=format&fit=crop&w=1920&q=80"
+            alt=""
+            loading="eager"
+            fetchpriority="high"
+          >
+        </div>
+        <div class="hero-bg-layer hero-bg-mid" aria-hidden="true"></div>
+        <div class="hero-noise" aria-hidden="true"></div>
+      </div>
+
+      <!-- Floating ink particles -->
+      <div class="hero-particles" aria-hidden="true"></div>
+
+      <!-- Big decorative background text -->
+      <div class="hero-deco" aria-hidden="true">
+        <span class="hero-deco-word">TATTOO</span>
       </div>
 
       <div class="hero-content">
@@ -74,7 +89,7 @@
 
     <!-- INTRO -->
     <section class="intro reveal" aria-label="À propos du studio">
-      <p class="intro-text">
+      <p class="intro-text" data-split-words>
         <strong>La Goutte d'Encre</strong> est un studio guadeloupéen dédié à deux arts du soin :
         le tatouage, précis et permanent, et le massage bien-être, profond et réparateur.
         Chaque séance est pensée pour vous, dans un espace calme, à votre rythme.
@@ -84,7 +99,8 @@
     <!-- SERVICES -->
     <section class="services" aria-label="Nos services">
       <div class="services-grid">
-        <div class="service service--tattoo reveal">
+        <div class="service service--tattoo service-card">
+          <div class="service-card-glow"></div>
           <span class="service-label">01 — Tatouage</span>
           <h2 class="service-name">Studio<br>Tattoo</h2>
           <p class="service-desc">
@@ -99,7 +115,8 @@
           </a>
         </div>
 
-        <div class="service service--massage reveal reveal-delay-1">
+        <div class="service service--massage service-card">
+          <div class="service-card-glow"></div>
           <span class="service-label">02 — Bien-être</span>
           <h2 class="service-name">Massage<br>Bien-être</h2>
           <p class="service-desc">
