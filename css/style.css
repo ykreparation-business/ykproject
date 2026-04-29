@@ -148,9 +148,9 @@ p { text-wrap: pretty; }
 }
 
 .nav-logo img {
-  height: 36px;
+  height: 38px;
   width: auto;
-  max-width: 220px;
+  max-width: 260px;
   mix-blend-mode: screen;
 }
 
@@ -312,7 +312,7 @@ button:focus-visible {
 }
 
 .hero-logo {
-  width: min(480px, 78vw);
+  width: min(560px, 88vw);
   height: auto;
   mix-blend-mode: screen;
   filter: brightness(1.1) drop-shadow(0 0 24px oklch(54% 0.15 42 / 0.3));
