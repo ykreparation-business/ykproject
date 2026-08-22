@@ -2,16 +2,16 @@
   <title id="dynastiqLogoTitle">Dynastiq Antilles</title>
   <defs>
     <style>
-      .navy { fill: #0E2233; }
-      .teal { fill: #17827E; }
-      .gold { fill: #E3A73A; }
-      .steel { fill: #46617A; }
-      .orange { fill: #E2542A; }
+      .navy { fill: #112937; }
+      .teal { fill: #118F92; }
+      .gold { fill: #E7A92C; }
+      .steel { fill: #2A4152; }
+      .orange { fill: #ED4E25; }
     </style>
   </defs>
 
   <!-- circuit traces, background -->
-  <g fill="none" stroke="#17827E" stroke-width="2.5" stroke-linecap="round">
+  <g fill="none" stroke="#118F92" stroke-width="2.5" stroke-linecap="round">
     <path d="M60 150 L30 150 L30 110" />
     <path d="M70 175 L20 175" />
     <path d="M330 140 L360 140 L360 95" />
@@ -42,7 +42,7 @@
   </g>
 
   <!-- crown sensor prongs -->
-  <g stroke="#17827E" stroke-width="7" stroke-linecap="round">
+  <g stroke="#118F92" stroke-width="7" stroke-linecap="round">
     <line x1="163" y1="184" x2="163" y2="146" />
     <line x1="200" y1="184" x2="200" y2="132" />
     <line x1="237" y1="184" x2="237" y2="146" />
@@ -61,7 +61,7 @@
     <circle class="steel" cx="200" cy="300" r="80" />
     <circle class="teal" cx="200" cy="300" r="52" />
     <circle class="navy" cx="200" cy="300" r="34" />
-    <path d="M 200 274 A 26 26 0 0 1 224 292" fill="none" stroke="#E3A73A" stroke-width="6" stroke-linecap="round" />
+    <path d="M 200 274 A 26 26 0 0 1 224 292" fill="none" stroke="#E7A92C" stroke-width="6" stroke-linecap="round" />
     <circle class="navy" cx="200" cy="300" r="14" />
   </g>
 
