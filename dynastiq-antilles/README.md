@@ -56,7 +56,7 @@ en variables CSS dans `app/globals.css` : `nuit`, `teal`, `teal-deep`, `slate`,
 `amber`, `vermillon`, `blanc`. Ne jamais coder un hex en dur dans un composant
 — utiliser les classes Tailwind générées (`bg-teal`, `text-amber`, etc.).
 
-Typographie : *Chakra Petch* (display), *IBM Plex Sans* (body), *IBM Plex Mono*
+Typographie : _Chakra Petch_ (display), _IBM Plex Sans_ (body), _IBM Plex Mono_
 (utility — chiffres, timecodes, labels techniques), chargées via
 `next/font/google` dans `app/layout.tsx`.
 

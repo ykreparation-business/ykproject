@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Chakra_Petch, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { SiteFooter } from "@/components/ui/site-footer";
+import { SiteHeader } from "@/components/ui/site-header";
 import { site } from "@/content/site";
 import "./globals.css";
 
@@ -39,7 +41,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="fr"
       className={`${chakraPetch.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="bg-nuit text-blanc flex min-h-full flex-col">{children}</body>
+      <body className="bg-nuit text-blanc flex min-h-full flex-col">
+        <SiteHeader />
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 }
