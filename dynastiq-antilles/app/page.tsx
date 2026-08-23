@@ -1,64 +1,54 @@
-import Image from "next/image";
-import { site } from "@/content/site";
-
-const palette = [
-  { name: "nuit", value: "var(--nuit)" },
-  { name: "teal", value: "var(--teal)" },
-  { name: "teal-deep", value: "var(--teal-deep)" },
-  { name: "slate", value: "var(--slate)" },
-  { name: "amber", value: "var(--amber)" },
-  { name: "vermillon", value: "var(--vermillon)" },
-] as const;
+import { AjaxEnBref } from "@/components/sections/ajax-en-bref";
+import { Antilles } from "@/components/sections/antilles";
+import { ChiffresSection } from "@/components/sections/chiffres-section";
+import { Comparatif } from "@/components/sections/comparatif";
+import { CtaContact } from "@/components/sections/cta-contact";
+import { FaqSection } from "@/components/sections/faq-section";
+import { Hero } from "@/components/sections/hero";
+import { InteractivePlan } from "@/components/sections/interactive-plan";
+import { MarquesMarquee } from "@/components/sections/marques-marquee";
+import { Metiers } from "@/components/sections/metiers";
+import { Process } from "@/components/sections/process";
+import { RealisationsSection } from "@/components/sections/realisations-section";
+import { ZonesCarte } from "@/components/sections/zones-carte";
+import { Reveal } from "@/components/motion/reveal";
 
 export default function Home() {
   return (
-    <main className="bg-supervision flex flex-1 flex-col items-center justify-center gap-10 px-6 py-24 text-center">
-      <Image
-        src="/brand/logo.svg"
-        alt={site.nom}
-        width={120}
-        height={150}
-        priority
-        className="relative z-10"
-      />
+    <main>
+      <Hero />
+      <MarquesMarquee />
 
-      <div className="relative z-10 space-y-4">
-        <h1 className="font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-          {site.nom}
-        </h1>
-        <p className="text-blanc/80 mx-auto max-w-xl text-lg">{site.baseline}</p>
-      </div>
+      <section className="border-slate/60 bg-nuit-deep border-b">
+        <div className="mx-auto max-w-7xl px-6 py-24">
+          <Reveal>
+            <p className="text-teal font-mono text-xs tracking-widest uppercase">
+              Signature
+            </p>
+            <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight">
+              Vois ce qu&apos;on recommande, avant même le devis
+            </h2>
+            <p className="text-blanc/70 mt-4 max-w-2xl">
+              Choisis un type de bien, explore les points d&apos;équipement sur le plan,
+              et découvre le matériel recommandé pour chacun — et pourquoi.
+            </p>
+          </Reveal>
+          <div className="mt-10">
+            <InteractivePlan />
+          </div>
+        </div>
+      </section>
 
-      <div className="relative z-10 flex flex-wrap items-center justify-center gap-4">
-        <a
-          href="/devis"
-          className="bg-teal text-blanc hover:bg-teal-deep rounded-full px-6 py-3 font-medium transition-colors"
-        >
-          Demander un devis
-        </a>
-        <a
-          href={site.telephoneHref}
-          className="border-amber text-amber hover:bg-amber/10 rounded-full border px-6 py-3 font-medium transition-colors"
-        >
-          Appeler {site.telephone}
-        </a>
-      </div>
-
-      <p className="text-blanc/40 font-mono text-xs tracking-widest uppercase">
-        Phase 1 — fondations en place
-      </p>
-
-      <ul className="relative z-10 flex flex-wrap justify-center gap-3">
-        {palette.map((color) => (
-          <li key={color.name} className="flex flex-col items-center gap-2">
-            <span
-              className="border-blanc/10 h-10 w-10 rounded-full border"
-              style={{ background: color.value }}
-            />
-            <span className="text-blanc/50 font-mono text-[10px]">{color.name}</span>
-          </li>
-        ))}
-      </ul>
+      <Metiers />
+      <Antilles />
+      <Process />
+      <RealisationsSection />
+      <Comparatif />
+      <AjaxEnBref />
+      <ChiffresSection />
+      <ZonesCarte />
+      <FaqSection />
+      <CtaContact />
     </main>
   );
 }
