@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/ui/page-shell";
 import { TodoNote } from "@/components/ui/todo-note";
 import { formules } from "@/content/tarifs";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Tarifs",
   description:
     "Formules et fourchettes de prix pour l'installation de vidéosurveillance et d'alarme en Guadeloupe.",
-};
+  path: "/tarifs",
+});
 
 export default function TarifsPage() {
   return (

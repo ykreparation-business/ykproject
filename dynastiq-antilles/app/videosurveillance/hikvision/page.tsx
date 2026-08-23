@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/ui/page-shell";
 import { marques } from "@/content/marques";
+import { pageMetadata } from "@/lib/seo";
 
 const marque = marques.find((m) => m.slug === "hikvision")!;
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: marque.nom,
   description: marque.positionnement,
-};
+  path: "/videosurveillance/hikvision",
+});
 
 export default function HikvisionPage() {
   return (

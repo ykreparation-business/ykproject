@@ -1,9 +1,13 @@
-import type { Metadata } from "next";
 import { PageShell } from "@/components/ui/page-shell";
 import { TodoNote } from "@/components/ui/todo-note";
 import { site } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Mentions légales" };
+export const metadata = pageMetadata({
+  title: "Mentions légales",
+  description: `Mentions légales de ${site.nom}.`,
+  path: "/mentions-legales",
+});
 
 // Contenu légal complet à rédiger en Phase 7. Les champs de content/site.ts
 // marqués "À CONFIRMER" doivent être remplacés par les vraies informations

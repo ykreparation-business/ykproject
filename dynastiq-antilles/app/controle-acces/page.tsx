@@ -1,12 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/ui/json-ld";
 import { PageShell } from "@/components/ui/page-shell";
+import { breadcrumbJsonLd, pageMetadata, serviceJsonLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
+const description =
+  "Interphonie, digicode et contrôle d'accès pour maisons, commerces, entreprises et copropriétés en Guadeloupe.";
+
+export const metadata = pageMetadata({
   title: "Contrôle d'accès & interphonie",
-  description:
-    "Interphonie, digicode et contrôle d'accès pour maisons, commerces, entreprises et copropriétés en Guadeloupe.",
-};
+  description,
+  path: "/controle-acces",
+});
 
 const solutions = [
   {
@@ -38,6 +42,20 @@ export default function ControleAccesPage() {
       title="Contrôle d'accès & interphonie"
       intro="Savoir qui entre, quand, et pouvoir gérer les accès sans reprendre l'installation à chaque changement — du digicode simple au contrôle d'accès par badge pour les sites à plusieurs zones."
     >
+      <JsonLd
+        data={serviceJsonLd({
+          name: "Contrôle d'accès & interphonie",
+          description,
+          path: "/controle-acces",
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Accueil", path: "/" },
+          { name: "Contrôle d'accès & interphonie", path: "/controle-acces" },
+        ])}
+      />
+
       <div className="grid gap-4 sm:grid-cols-2">
         {solutions.map((solution) => (
           <div key={solution.titre} className="border-slate/60 rounded-xl border p-5">

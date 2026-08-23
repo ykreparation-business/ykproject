@@ -1,13 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/ui/json-ld";
 import { PageShell } from "@/components/ui/page-shell";
 import { marques } from "@/content/marques";
+import { breadcrumbJsonLd, pageMetadata, serviceJsonLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
+const description =
+  "Installation et configuration de caméras de vidéosurveillance en Guadeloupe — Hikvision, Dahua, Safire.";
+
+export const metadata = pageMetadata({
   title: "Vidéosurveillance",
-  description:
-    "Installation et configuration de caméras de vidéosurveillance en Guadeloupe — Hikvision, Dahua, Safire.",
-};
+  description,
+  path: "/videosurveillance",
+});
 
 export default function VideosurveillancePage() {
   return (
@@ -16,6 +20,20 @@ export default function VideosurveillancePage() {
       title="Vidéosurveillance : caméras & enregistrement"
       intro="Nous installons et configurons des systèmes de vidéosurveillance adaptés au bâtiment et au budget — caméras extérieures et intérieures, enregistreur local, application de consultation à distance. Installateur et intégrateur, pas revendeur de boîtes : le matériel est choisi pour le site, pas l'inverse."
     >
+      <JsonLd
+        data={serviceJsonLd({
+          name: "Vidéosurveillance",
+          description,
+          path: "/videosurveillance",
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Accueil", path: "/" },
+          { name: "Vidéosurveillance", path: "/videosurveillance" },
+        ])}
+      />
+
       <section>
         <h2 className="font-display text-xl font-semibold">
           Ce que couvre l&apos;installation

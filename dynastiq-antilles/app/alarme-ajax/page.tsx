@@ -1,17 +1,35 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/ui/json-ld";
 import { PageShell } from "@/components/ui/page-shell";
 import { ajax } from "@/content/marques";
+import { breadcrumbJsonLd, pageMetadata, serviceJsonLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
+const description =
+  "Installation d'alarme sans fil Ajax en Guadeloupe : hub, détecteurs, MotionCam, pilotage par application.";
+
+export const metadata = pageMetadata({
   title: "Alarme sans fil Ajax",
-  description:
-    "Installation d'alarme sans fil Ajax en Guadeloupe : hub, détecteurs, MotionCam, pilotage par application.",
-};
+  description,
+  path: "/alarme-ajax",
+});
 
 export default function AlarmeAjaxPage() {
   return (
     <PageShell kicker="Pilier" title="Alarme sans fil Ajax" intro={ajax.intro}>
+      <JsonLd
+        data={serviceJsonLd({
+          name: "Alarme sans fil Ajax",
+          description,
+          path: "/alarme-ajax",
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Accueil", path: "/" },
+          { name: "Alarme sans fil Ajax", path: "/alarme-ajax" },
+        ])}
+      />
+
       <div className="grid gap-4 sm:grid-cols-2">
         {ajax.points.map((point) => (
           <div key={point.titre} className="border-slate/60 rounded-xl border p-5">

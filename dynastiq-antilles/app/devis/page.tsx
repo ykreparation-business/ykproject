@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { DevisForm } from "@/components/sections/devis-form";
 import { PageShell } from "@/components/ui/page-shell";
 import { site } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Demander un devis",
   description: `Demande un devis gratuit à ${site.nom} pour ton projet de vidéosurveillance ou d'alarme.`,
-};
+  path: "/devis",
+});
 
 export default function DevisPage() {
   return (

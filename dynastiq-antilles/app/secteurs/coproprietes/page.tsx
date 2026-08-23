@@ -1,11 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/ui/page-shell";
 import { secteurs } from "@/content/secteurs";
+import { pageMetadata } from "@/lib/seo";
 
 const secteur = secteurs.find((s) => s.slug === "coproprietes")!;
 
-export const metadata: Metadata = { title: secteur.titre, description: secteur.intro };
+export const metadata = pageMetadata({
+  title: secteur.titre,
+  description: secteur.intro,
+  path: "/secteurs/coproprietes",
+});
 
 export default function CoproprietesPage() {
   return (

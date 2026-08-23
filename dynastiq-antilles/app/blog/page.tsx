@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/ui/page-shell";
 import { articles } from "@/content/blog";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Blog",
   description:
     "Conseils et actualités sur la vidéosurveillance et l'alarme en Guadeloupe.",
-};
+  path: "/blog",
+});
 
 export default function BlogPage() {
   return (

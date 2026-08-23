@@ -56,6 +56,10 @@ export const footerLinks: NavGroup[] = [
   {
     label: "Légal",
     links: [
+      {
+        label: "Vidéoprotection : vos obligations",
+        href: "/videoprotection-obligations",
+      },
       { label: "Mentions légales", href: "/mentions-legales" },
       { label: "Politique de confidentialité", href: "/politique-de-confidentialite" },
       { label: "CGV", href: "/cgv" },

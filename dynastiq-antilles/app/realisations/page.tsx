@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
 import { PageShell } from "@/components/ui/page-shell";
 import { TodoNote } from "@/components/ui/todo-note";
 import { realisations } from "@/content/realisations";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Réalisations",
   description:
     "Études de cas d'installations de vidéosurveillance et d'alarme en Guadeloupe.",
-};
+  path: "/realisations",
+});
 
 export default function RealisationsPage() {
   return (

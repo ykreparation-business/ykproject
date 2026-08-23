@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { PageShell } from "@/components/ui/page-shell";
 import { TodoNote } from "@/components/ui/todo-note";
 import { site } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "À propos",
   description: `${site.nom}, installateur de vidéosurveillance et d'alarme en Guadeloupe.`,
-};
+  path: "/a-propos",
+});
 
 export default function AProposPage() {
   return (

@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/ui/page-shell";
 import { TodoNote } from "@/components/ui/todo-note";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Télésurveillance",
   description:
     "Télésurveillance en option, en partenariat avec un centre de surveillance agréé.",
-};
+  path: "/telesurveillance",
+});
 
 // Page prête et activable : la télésurveillance implique un partenariat avec
 // un centre de télésurveillance agréé (levée de doute, transmission aux

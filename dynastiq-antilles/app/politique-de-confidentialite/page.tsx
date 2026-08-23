@@ -1,9 +1,13 @@
-import type { Metadata } from "next";
 import { PageShell } from "@/components/ui/page-shell";
 import { TodoNote } from "@/components/ui/todo-note";
 import { site } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Politique de confidentialité" };
+export const metadata = pageMetadata({
+  title: "Politique de confidentialité",
+  description: `Politique de confidentialité et RGPD de ${site.nom}.`,
+  path: "/politique-de-confidentialite",
+});
 
 // Politique RGPD complète à rédiger en Phase 7 (finalité, base légale,
 // durée de conservation, destinataires, droits, réclamation CNIL).

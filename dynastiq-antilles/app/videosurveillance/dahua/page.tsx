@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/ui/page-shell";
 import { marques } from "@/content/marques";
+import { pageMetadata } from "@/lib/seo";
 
 const marque = marques.find((m) => m.slug === "dahua")!;
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: marque.nom,
   description: marque.positionnement,
-};
+  path: "/videosurveillance/dahua",
+});
 
 export default function DahuaPage() {
   return (

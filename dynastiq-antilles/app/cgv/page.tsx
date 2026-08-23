@@ -1,8 +1,13 @@
-import type { Metadata } from "next";
 import { PageShell } from "@/components/ui/page-shell";
 import { TodoNote } from "@/components/ui/todo-note";
+import { site } from "@/content/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "CGV" };
+export const metadata = pageMetadata({
+  title: "CGV",
+  description: `Conditions générales de vente de ${site.nom}.`,
+  path: "/cgv",
+});
 
 // Conditions générales de vente à rédiger en Phase 7, avec l'entreprise
 // (devis, acompte, délais d'installation, garantie matériel, SAV).
