@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/ui/page-shell";
-import { site } from "@/content/site";
+import { site, whatsappHref } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -32,7 +32,7 @@ export default function ContactPage() {
           </dt>
           <dd className="mt-2">
             <a
-              href={site.whatsapp}
+              href={whatsappHref()}
               target="_blank"
               rel="noopener noreferrer"
               className="text-teal text-lg hover:underline"

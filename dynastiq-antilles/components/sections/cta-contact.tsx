@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Magnetic } from "@/components/motion/magnetic";
 import { Reveal } from "@/components/motion/reveal";
 import { SplitText } from "@/components/motion/split-text";
-import { site } from "@/content/site";
+import { site, whatsappHref } from "@/content/site";
 
 export function CtaContact() {
   return (
@@ -50,7 +50,7 @@ export function CtaContact() {
               <dt className="sr-only">WhatsApp</dt>
               <dd>
                 <a
-                  href={site.whatsapp}
+                  href={whatsappHref()}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-teal"

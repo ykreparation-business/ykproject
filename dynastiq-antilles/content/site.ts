@@ -20,3 +20,10 @@ export const site = {
   ] as const,
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://dynastiq-antilles.example",
 } as const;
+
+const WHATSAPP_DEFAULT_MESSAGE =
+  "Bonjour, je souhaite un devis pour une installation de vidéosurveillance / alarme.";
+
+export function whatsappHref(message: string = WHATSAPP_DEFAULT_MESSAGE) {
+  return `${site.whatsapp}?text=${encodeURIComponent(message)}`;
+}
