@@ -19,7 +19,9 @@ export function Counter({ value, suffix = "", className }: CounterProps) {
   useEffect(() => {
     if (!inView) return;
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     const controls = animate(0, value, {
       duration: prefersReducedMotion ? 0 : 1.4,

@@ -96,6 +96,21 @@ body {
   animation-play-state: paused;
 }
 
+/* Curseur personnalisé : masque le curseur natif partout sauf sur les
+   champs de formulaire, où l'utilisateur garde le curseur système. */
+@media (hover: hover) and (pointer: fine) {
+  .has-custom-cursor {
+    cursor: none;
+  }
+
+  .has-custom-cursor input,
+  .has-custom-cursor textarea,
+  .has-custom-cursor select,
+  .has-custom-cursor [contenteditable="true"] {
+    cursor: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -17,6 +17,7 @@ export function RealisationsSection() {
         </div>
         <Link
           href="/realisations"
+          data-cursor="VOIR"
           className="text-teal text-sm font-medium hover:underline"
         >
           Toutes les réalisations →

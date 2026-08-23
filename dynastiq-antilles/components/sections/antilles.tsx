@@ -1,4 +1,5 @@
 import { Reveal } from "@/components/motion/reveal";
+import { SplitText } from "@/components/motion/split-text";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { pointsAntilles } from "@/content/antilles";
 
@@ -11,7 +12,7 @@ export function Antilles() {
             Différenciant
           </p>
           <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight">
-            Conçu pour les Antilles
+            <SplitText text="Conçu pour les Antilles" />
           </h2>
           <p className="text-blanc/70 mt-4 max-w-2xl text-lg">
             Le climat antillais use le matériel plus vite qu&apos;en métropole. Chaque

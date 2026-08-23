@@ -12,6 +12,7 @@ import { Process } from "@/components/sections/process";
 import { RealisationsSection } from "@/components/sections/realisations-section";
 import { ZonesCarte } from "@/components/sections/zones-carte";
 import { Reveal } from "@/components/motion/reveal";
+import { SplitText } from "@/components/motion/split-text";
 
 export default function Home() {
   return (
@@ -26,7 +27,7 @@ export default function Home() {
               Signature
             </p>
             <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight">
-              Vois ce qu&apos;on recommande, avant même le devis
+              <SplitText text="Vois ce qu'on recommande, avant même le devis" />
             </h2>
             <p className="text-blanc/70 mt-4 max-w-2xl">
               Choisis un type de bien, explore les points d&apos;équipement sur le plan,

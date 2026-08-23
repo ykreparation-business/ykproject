@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Magnetic } from "@/components/motion/magnetic";
 import { Reveal } from "@/components/motion/reveal";
+import { SplitText } from "@/components/motion/split-text";
 import { site } from "@/content/site";
 
 export function CtaContact() {
@@ -8,7 +10,7 @@ export function CtaContact() {
       <div className="mx-auto max-w-4xl px-6 py-24 text-center">
         <Reveal>
           <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-            Parlons de ton projet
+            <SplitText text="Parlons de ton projet" />
           </h2>
           <p className="text-blanc/70 mx-auto mt-4 max-w-xl">
             Devis gratuit, sans engagement. Décris ton besoin, on te recontacte
@@ -16,18 +18,23 @@ export function CtaContact() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/devis"
-              className="hover:bg-teal-deep bg-teal text-blanc rounded-full px-7 py-3.5 font-medium transition-colors"
-            >
-              Demander un devis
-            </Link>
-            <a
-              href={site.telephoneHref}
-              className="hover:bg-amber/10 border-amber text-amber rounded-full border px-7 py-3.5 font-medium transition-colors"
-            >
-              Appeler {site.telephone}
-            </a>
+            <Magnetic>
+              <Link
+                href="/devis"
+                className="hover:bg-teal-deep bg-teal text-blanc inline-block rounded-full px-7 py-3.5 font-medium transition-colors"
+              >
+                Demander un devis
+              </Link>
+            </Magnetic>
+            <Magnetic>
+              <a
+                href={site.telephoneHref}
+                data-cursor="APPELER"
+                className="hover:bg-amber/10 border-amber text-amber inline-block rounded-full border px-7 py-3.5 font-medium transition-colors"
+              >
+                Appeler {site.telephone}
+              </a>
+            </Magnetic>
           </div>
 
           <dl className="text-blanc/60 mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">

@@ -17,6 +17,7 @@ export function Metiers() {
           <StaggerItem key={metier.titre}>
             <Link
               href={metier.href}
+              data-cursor="VOIR"
               className="border-slate/60 hover:border-teal group block h-full rounded-xl border p-6 transition-colors"
             >
               <p className="font-display group-hover:text-teal text-lg font-semibold transition-colors">

@@ -63,6 +63,7 @@ export function ZonesCarte() {
           <Link
             key={ville.slug}
             href={`/zones/${ville.slug}`}
+            data-cursor="VOIR"
             className="group absolute -translate-x-1/2 -translate-y-1/2"
             style={{
               left: `${(ville.mapPosition.x / VIEWBOX.width) * 100}%`,
