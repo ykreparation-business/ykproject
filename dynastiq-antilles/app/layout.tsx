@@ -3,6 +3,7 @@ import { Chakra_Petch, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { CustomCursor } from "@/components/motion/custom-cursor";
 import { MotionProvider } from "@/components/motion/motion-provider";
 import { PageTransition } from "@/components/motion/page-transition";
+import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { CookieBanner } from "@/components/ui/cookie-banner";
 import { JsonLd } from "@/components/ui/json-ld";
 import { MobileActionBar } from "@/components/ui/mobile-action-bar";
@@ -16,21 +17,21 @@ const chakraPetch = Chakra_Petch({
   variable: "--font-chakra-petch",
   subsets: ["latin"],
   weight: ["500", "600", "700"],
-  display: "swap",
+  display: "optional",
 });
 
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  display: "swap",
+  display: "optional",
 });
 
 const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="bg-nuit text-blanc flex min-h-full flex-col pb-14 lg:pb-0">
         <JsonLd data={localBusinessJsonLd()} />
         <MotionProvider>
+          <SmoothScroll />
           <CustomCursor />
           <SiteHeader />
           <PageTransition>{children}</PageTransition>

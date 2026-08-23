@@ -80,5 +80,50 @@ npm run build        # build de production
 
 ## État du projet
 
-Voir le récapitulatif de phase le plus récent dans la conversation pour la
-liste des TODO restants et l'avancement par phase.
+Les 8 phases du brief sont livrées : fondations, arborescence complète,
+home animée, système de motion, formulaire de devis, SEO local, pages
+légales, passe qualité.
+
+### TODO restants avant mise en production
+
+Tout ce qui suit est volontairement laissé en attente — aucune information
+n'a été inventée pour combler ces champs :
+
+- **`content/site.ts`** — téléphone, WhatsApp, email, adresse, SIRET,
+  horaires, assurance (tous marqués `// À CONFIRMER`).
+- **Mentions légales** (`/mentions-legales`) — nom du directeur de
+  publication.
+- **CGV** (`/cgv`) — pourcentage d'acompte, durée de garantie commerciale,
+  préavis de résiliation (décisions commerciales de l'entreprise).
+- **`content/tarifs.ts`** — fourchettes de prix (`À CONFIRMER`, aucun
+  montant inventé).
+- **`content/chiffres.ts`** — compteurs animés de la home, actuellement à 0
+  et marqués « À VALIDER » (sites protégés, années d'expérience, délai
+  moyen d'intervention).
+- **`content/realisations.ts`** — 3 cas d'exemple à remplacer par de vrais
+  chantiers (accord client requis pour publication).
+- **`/telesurveillance`** — service listé « activable » : nécessite un
+  partenariat confirmé avec un centre de télésurveillance agréé.
+- **Marques (Hikvision/Dahua/Safire/Ajax)** — le site n'héberge pas les
+  logos officiels des fabricants (droits d'usage à obtenir séparément) ;
+  la barre de marques utilise un traitement typographique en attendant.
+- **`public/brand/`** — logo recréé à la main en SVG à partir de l'aperçu
+  fourni ; à remplacer par les fichiers vectoriels sources si disponibles.
+- **Réalisations chiffrées & certifications** — aucun agrément CNAPS, label
+  APSAD ou partenariat officiel n'est affirmé nulle part sur le site.
+
+### 3 pistes pour une v2
+
+1. **Vrai CMS pour `content/`** — les fichiers TypeScript typés sont
+   volontairement simples à éditer pour un développeur, mais une personne
+   non technique (l'entreprise elle-même) gagnerait à avoir une interface
+   (Sanity, ou un simple panneau interne) pour mettre à jour tarifs, FAQ et
+   réalisations sans toucher au code.
+2. **Suivi de conversion** — une fois un outil de mesure d'audience choisi
+   et le consentement cookie géré en conséquence, instrumenter le tunnel du
+   formulaire de devis (abandon par étape) pour identifier où les
+   prospects décrochent.
+3. **Étoffer le blog et les pages ville** — `content/blog.ts` démarre vide
+   et les pages `/zones/{ville}` ont un contenu général mais pas encore de
+   vraies photos de chantiers locaux ; les deux sont des leviers SEO
+   naturels une fois que l'entreprise aura des réalisations à documenter.
