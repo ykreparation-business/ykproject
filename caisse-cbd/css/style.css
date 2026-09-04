@@ -847,6 +847,35 @@ main {
 
 .legal-note strong { color: var(--encre); }
 
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.85rem;
+  color: var(--encre-doux);
+  font-weight: 600;
+}
+
+.sync-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--encre-doux);
+  flex-shrink: 0;
+}
+
+.sync-dot.ok { background: var(--mousse); }
+.sync-dot.erreur { background: var(--rupture); }
+.sync-dot.sync {
+  background: var(--or);
+  animation: pulse-sync 1s ease-in-out infinite;
+}
+
+@keyframes pulse-sync {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
 /* ============================== Formulaire produit (modal) ============================== */
 
 .modal.produit-form { max-width: 420px; }

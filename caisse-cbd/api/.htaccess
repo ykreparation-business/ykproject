@@ -1,0 +1,8 @@
+# Empêche l'affichage brut de config.php (identifiants MySQL) si PHP
+# n'est pas exécuté pour une raison quelconque sur l'hébergement.
+<Files "config.php">
+  Require all denied
+</Files>
+<Files "config.example.php">
+  Require all denied
+</Files>

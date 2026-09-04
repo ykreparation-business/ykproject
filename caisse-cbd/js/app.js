@@ -63,11 +63,17 @@ function todayISO() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
+// Regroupe par date/mois calendaire LOCAL (fuseau de l'iPad, ex. Guadeloupe UTC-4) :
+// une vente enregistrée en soirée locale ne doit pas basculer sur le jour UTC suivant.
+function localDateStr(iso) {
+  const d = new Date(iso);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
 function isSameDay(iso, dateStr) {
-  return iso.slice(0, 10) === dateStr;
+  return localDateStr(iso) === dateStr;
 }
 function isSameMonth(iso, monthStr) {
-  return iso.slice(0, 7) === monthStr;
+  return localDateStr(iso).slice(0, 7) === monthStr;
 }
 
 let toastTimer;
@@ -102,8 +108,12 @@ function switchView(name) {
 
 let categorieActive = 'Toutes';
 
+function produitsActifs() {
+  return state.products.filter((p) => !p.deleted);
+}
+
 function categoriesDisponibles() {
-  const set = new Set(state.products.map((p) => p.categorie || 'Autres'));
+  const set = new Set(produitsActifs().map((p) => p.categorie || 'Autres'));
   return ['Toutes', ...Array.from(set).sort()];
 }
 
@@ -133,15 +143,15 @@ function renderGrille() {
   const grid = document.getElementById('product-grid');
   const empty = document.getElementById('catalogue-empty');
 
-  if (state.products.length === 0) {
+  const list = produitsActifs().filter((p) => categorieActive === 'Toutes' || (p.categorie || 'Autres') === categorieActive);
+
+  if (produitsActifs().length === 0) {
     grid.classList.add('hidden');
     empty.classList.remove('hidden');
     return;
   }
   grid.classList.remove('hidden');
   empty.classList.add('hidden');
-
-  const list = state.products.filter((p) => categorieActive === 'Toutes' || (p.categorie || 'Autres') === categorieActive);
 
   grid.innerHTML = list
     .map(
@@ -331,12 +341,10 @@ function validerVente() {
     montantRecu,
     total,
     voided: false,
+    dirty: true,
   };
 
   state.sales.push(sale);
-  if (paiementMode === 'especes') {
-    state.settings.fondCaisseInitial = state.settings.fondCaisseInitial; // fond initial inchangé, calcul dynamique au rapport
-  }
   state.cart = [];
   state.remise = 0;
   saveState();
@@ -345,6 +353,7 @@ function validerVente() {
   renderTicket();
   printTicketVente(sale);
   toast('Vente enregistrée · ticket envoyé à l’impression');
+  requestSync();
 }
 
 /* ============================================================
@@ -355,7 +364,9 @@ function renderProduits() {
   const wrap = document.getElementById('produits-liste');
   const empty = document.getElementById('produits-empty');
 
-  if (state.products.length === 0) {
+  const actifs = produitsActifs();
+
+  if (actifs.length === 0) {
     wrap.classList.add('hidden');
     empty.classList.remove('hidden');
     return;
@@ -364,7 +375,7 @@ function renderProduits() {
   empty.classList.add('hidden');
 
   const groupes = {};
-  state.products.forEach((p) => {
+  actifs.forEach((p) => {
     const cat = p.categorie || 'Autres';
     (groupes[cat] = groupes[cat] || []).push(p);
   });
@@ -397,9 +408,11 @@ function renderProduits() {
     row.querySelector('.del').addEventListener('click', () => {
       const p = state.products.find((pr) => pr.id === id);
       if (confirm(`Supprimer « ${p.nom} » du catalogue ?`)) {
-        state.products = state.products.filter((pr) => pr.id !== id);
+        p.deleted = true;
+        p.dirty = true;
         saveState();
         renderProduits();
+        requestSync();
       }
     });
   });
@@ -453,14 +466,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (id) {
       const p = state.products.find((pr) => pr.id === id);
-      Object.assign(p, { nom, categorie, prixTTC, tauxTVA: tauxSelectionne });
+      Object.assign(p, { nom, categorie, prixTTC, tauxTVA: tauxSelectionne, dirty: true });
     } else {
-      state.products.push({ id: uid(), nom, categorie, prixTTC, tauxTVA: tauxSelectionne });
+      state.products.push({ id: uid(), nom, categorie, prixTTC, tauxTVA: tauxSelectionne, deleted: false, dirty: true });
     }
     saveState();
     closeProduitForm();
     renderProduits();
     toast('Produit enregistré');
+    requestSync();
   });
 });
 
@@ -598,6 +612,10 @@ function renderReglages() {
   document.getElementById('reg-siret').value = s.siret;
   document.getElementById('reg-naf').value = s.naf;
   document.getElementById('reg-fond').value = s.fondCaisseInitial;
+
+  document.getElementById('sync-url').value = syncConfig.apiUrl || '';
+  document.getElementById('sync-key').value = syncConfig.apiKey || '';
+  renderSyncStatus();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -646,6 +664,135 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsText(file);
     e.target.value = '';
   });
+
+  document.getElementById('form-sync').addEventListener('submit', (e) => {
+    e.preventDefault();
+    syncConfig.apiUrl = document.getElementById('sync-url').value.trim();
+    syncConfig.apiKey = document.getElementById('sync-key').value.trim();
+    saveSyncConfig();
+    toast('Identifiants de synchronisation enregistrés');
+    requestSync(true);
+  });
+
+  document.getElementById('btn-sync-now').addEventListener('click', () => requestSync(true));
+});
+
+/* ============================================================
+   SYNCHRONISATION — base de données distante (Hostinger MySQL)
+   Les identifiants (URL + clé API) sont stockés à part, jamais dans
+   l'export/import de sauvegarde, pour ne pas les exposer par erreur.
+   ============================================================ */
+
+const SYNC_KEY = 'natirel_caisse_sync_v1';
+
+function loadSyncConfig() {
+  try {
+    const raw = localStorage.getItem(SYNC_KEY);
+    return raw ? Object.assign({ apiUrl: '', apiKey: '', lastSync: null }, JSON.parse(raw)) : { apiUrl: '', apiKey: '', lastSync: null };
+  } catch (e) {
+    return { apiUrl: '', apiKey: '', lastSync: null };
+  }
+}
+function saveSyncConfig() {
+  localStorage.setItem(SYNC_KEY, JSON.stringify(syncConfig));
+}
+
+let syncConfig = loadSyncConfig();
+let syncing = false;
+let syncStatusState = 'idle'; // idle | sync | ok | erreur
+
+function renderSyncStatus() {
+  const dot = document.getElementById('sync-status-dot');
+  const txt = document.getElementById('sync-status-text');
+  if (!dot || !txt) return;
+  dot.className = 'sync-dot ' + syncStatusState;
+  if (syncStatusState === 'sync') {
+    txt.textContent = 'Synchronisation en cours…';
+  } else if (!syncConfig.apiUrl || !syncConfig.apiKey) {
+    txt.textContent = 'Non configurée';
+  } else if (syncStatusState === 'erreur') {
+    txt.textContent = 'Échec — nouvel essai automatique. Dernière réussite : ' + (syncConfig.lastSync ? fmtDateTime(syncConfig.lastSync) : 'jamais');
+  } else if (syncConfig.lastSync) {
+    txt.textContent = 'Dernière synchronisation : ' + fmtDateTime(syncConfig.lastSync);
+  } else {
+    txt.textContent = 'Jamais synchronisé';
+  }
+}
+
+function setSyncStatus(s) {
+  syncStatusState = s;
+  renderSyncStatus();
+}
+
+async function requestSync(manual) {
+  if (!syncConfig.apiUrl || !syncConfig.apiKey) {
+    if (manual) toast('Renseignez d’abord l’URL et la clé API de synchronisation.');
+    return;
+  }
+  if (syncing) return;
+  syncing = true;
+  setSyncStatus('sync');
+
+  const produitsAEnvoyer = state.products.filter((p) => p.dirty);
+  const ventesAEnvoyer = state.sales.filter((s) => s.dirty);
+
+  try {
+    const res = await fetch(syncConfig.apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Api-Key': syncConfig.apiKey },
+      body: JSON.stringify({
+        produits: produitsAEnvoyer,
+        ventes: ventesAEnvoyer,
+        reglages: state.settings,
+      }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    const idsProduitsEnvoyes = new Set(produitsAEnvoyer.map((p) => p.id));
+    const idsVentesEnvoyees = new Set(ventesAEnvoyer.map((s) => s.id));
+
+    (data.produits || []).forEach((serverP) => {
+      const local = state.products.find((p) => p.id === serverP.id);
+      if (!local) {
+        state.products.push(Object.assign({}, serverP, { dirty: false }));
+      } else if (!local.dirty || idsProduitsEnvoyes.has(local.id)) {
+        Object.assign(local, serverP, { dirty: false });
+      }
+    });
+
+    (data.ventes || []).forEach((serverS) => {
+      const local = state.sales.find((s) => s.id === serverS.id);
+      if (!local) {
+        state.sales.push(Object.assign({}, serverS, { dirty: false }));
+      } else if (!local.dirty || idsVentesEnvoyees.has(local.id)) {
+        Object.assign(local, serverS, { dirty: false });
+      }
+    });
+
+    if (data.reglages) {
+      Object.assign(state.settings, data.reglages);
+    }
+
+    syncConfig.lastSync = data.serverTime || new Date().toISOString();
+    saveSyncConfig();
+    saveState();
+    setSyncStatus('ok');
+    if (manual) toast('Synchronisation réussie');
+    if (document.getElementById('view-vente').classList.contains('active')) renderVente();
+    if (document.getElementById('view-reglages').classList.contains('active')) renderReglages();
+  } catch (err) {
+    console.error('Erreur de synchronisation', err);
+    setSyncStatus('erreur');
+    if (manual) toast('Échec de la synchronisation — nouvel essai automatique plus tard');
+  } finally {
+    syncing = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  requestSync(false);
+  setInterval(() => requestSync(false), 5 * 60 * 1000);
 });
 
 /* ============================================================
@@ -749,7 +896,7 @@ function printTicketX(monthStr) {
   const agr = computeAgregat(sales);
   const s = state.settings;
   const area = document.getElementById('print-area');
-  const joursTravailles = new Set(sales.filter((v) => !v.voided).map((v) => v.dateISO.slice(0, 10))).size;
+  const joursTravailles = new Set(sales.filter((v) => !v.voided).map((v) => localDateStr(v.dateISO))).size;
   const libelleMois = new Date(monthStr + '-01').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
 
   area.innerHTML = `

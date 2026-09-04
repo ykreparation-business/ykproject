@@ -191,9 +191,34 @@
         <button type="submit" class="btn-primary" style="margin-top: 0.5rem;">Enregistrer</button>
       </form>
 
+      <form class="form-card" id="form-sync">
+        <h4>Synchronisation (base de données Hostinger)</h4>
+        <p style="font-size: 0.85rem; color: var(--encre-doux); margin-bottom: 1rem;">Envoie automatiquement les ventes et le catalogue vers votre base de données en ligne, pour la comptabilité et le suivi à distance.</p>
+        <div class="field-row">
+          <div class="field full">
+            <label for="sync-url">URL de l’API (ex. https://votre-domaine.fr/caisse-cbd/api/sync.php)</label>
+            <input type="url" id="sync-url" placeholder="https://…/api/sync.php">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field full">
+            <label for="sync-key">Clé API</label>
+            <input type="password" id="sync-key" autocomplete="off">
+          </div>
+        </div>
+        <div class="sync-status">
+          <span class="sync-dot idle" id="sync-status-dot"></span>
+          <span id="sync-status-text">Non configurée</span>
+        </div>
+        <div style="display:flex; gap:0.7rem; flex-wrap: wrap; margin-top: 0.9rem;">
+          <button type="submit" class="btn-primary">Enregistrer les identifiants</button>
+          <button type="button" class="btn-secondary" id="btn-sync-now">⟳ Synchroniser maintenant</button>
+        </div>
+      </form>
+
       <div class="form-card">
         <h4>Sauvegarde des données</h4>
-        <p style="font-size: 0.85rem; color: var(--encre-doux); margin-bottom: 1rem;">Les données (produits, ventes) sont stockées sur cet iPad uniquement. Exportez régulièrement une sauvegarde.</p>
+        <p style="font-size: 0.85rem; color: var(--encre-doux); margin-bottom: 1rem;">En complément de la synchronisation en ligne, exportez de temps en temps une sauvegarde locale du catalogue et des ventes.</p>
         <div style="display:flex; gap:0.7rem; flex-wrap: wrap;">
           <button class="btn-secondary" id="btn-export">⬇ Exporter une sauvegarde</button>
           <label class="btn-secondary" style="display:inline-flex; align-items:center; cursor:pointer;">
