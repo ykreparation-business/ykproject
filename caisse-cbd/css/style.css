@@ -769,6 +769,70 @@ main {
 .detail-row .valeur { font-weight: 700; }
 .detail-row.total { font-weight: 800; font-size: 1rem; }
 
+.ventes-liste {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.vente-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--ligne);
+}
+
+.vente-row:last-child { border-bottom: none; }
+
+.vente-row.annulee { opacity: 0.5; }
+
+.vente-row .heure {
+  font-size: 0.82rem;
+  color: var(--encre-doux);
+  min-width: 3.2rem;
+}
+
+.vente-row .infos { flex: 1; min-width: 0; }
+
+.vente-row .mode {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--mousse);
+}
+
+.vente-row .employe {
+  font-size: 0.78rem;
+  color: var(--encre-doux);
+}
+
+.vente-row .montant {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  min-width: 4.5rem;
+  text-align: right;
+}
+
+.vente-row.annulee .montant { text-decoration: line-through; }
+
+.btn-annuler-vente {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--rupture);
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-s);
+  white-space: nowrap;
+}
+
+.btn-annuler-vente:active { background: rgba(163, 75, 58, 0.12); }
+
+.badge-annulee {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--rupture);
+  white-space: nowrap;
+}
+
 .rapport-actions {
   display: flex;
   gap: 0.7rem;

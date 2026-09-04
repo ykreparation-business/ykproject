@@ -732,7 +732,52 @@ function renderRapports() {
     <div class="detail-row"><span>Annulations (${agr.nbAnnulations})</span><span class="valeur">${eur(agr.totalAnnulations)}</span></div>
   `;
 
+  renderListeVentes(sales);
+
   window._rapportCourant = { mode: rapportMode, sales, agr, label: rapportMode === 'jour' ? fmtDate(rapportDate) : rapportMois };
+}
+
+function renderListeVentes(sales) {
+  const wrap = document.getElementById('liste-ventes');
+  const triees = [...sales].sort((a, b) => new Date(b.dateISO) - new Date(a.dateISO));
+
+  if (triees.length === 0) {
+    wrap.innerHTML = `<p style="font-size:0.85rem; color:var(--encre-doux);">Aucune vente sur cette période.</p>`;
+    return;
+  }
+
+  wrap.innerHTML = `<div class="ventes-liste">${triees
+    .map((s) => {
+      const heure = new Date(s.dateISO).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      const mode = s.paymentMethod === 'especes' ? 'Espèces' : 'Carte';
+      return `
+      <div class="vente-row ${s.voided ? 'annulee' : ''}" data-id="${s.id}">
+        <span class="heure">${heure}</span>
+        <div class="infos">
+          <div class="mode">${mode}</div>
+          ${s.employeNom ? `<div class="employe">${escapeHtml(s.employeNom)}</div>` : ''}
+        </div>
+        <span class="montant">${eur(s.total)}</span>
+        ${s.voided ? `<span class="badge-annulee">Annulée</span>` : `<button class="btn-annuler-vente" data-id="${s.id}">Annuler</button>`}
+      </div>`;
+    })
+    .join('')}</div>`;
+
+  wrap.querySelectorAll('.btn-annuler-vente').forEach((btn) => {
+    btn.addEventListener('click', () => annulerVente(btn.dataset.id));
+  });
+}
+
+function annulerVente(id) {
+  const s = state.sales.find((v) => v.id === id);
+  if (!s || s.voided) return;
+  if (!confirm(`Annuler cette vente de ${eur(s.total)} ? Elle sera exclue des totaux mais reste tracée.`)) return;
+  s.voided = true;
+  s.dirty = true;
+  saveState();
+  renderRapports();
+  requestSync();
+  toast('Vente annulée');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
