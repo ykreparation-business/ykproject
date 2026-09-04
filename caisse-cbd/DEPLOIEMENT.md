@@ -42,6 +42,14 @@ L'API est alors accessible à une URL du type :
 - Si l'iPad est hors ligne, les ventes restent enregistrées localement et partent au réseau suivant — rien n'est perdu, mais pensez à resynchroniser avant de faire la comptabilité du jour.
 - Le bouton « Synchroniser maintenant » (Réglages) force un essai immédiat.
 
+## 4. Activer les actualités CBD (optionnel)
+
+L'onglet « Actualités » affiche les derniers articles d'un flux RSS de votre choix, récupéré via `api/actualites.php` (déjà en place, rien à configurer côté serveur).
+
+1. Trouvez un flux RSS d'actualités CBD. Le plus simple : sur [google.com/alerts](https://google.com/alerts), créez une alerte (ex. « CBD actualité »), choisissez la livraison **« Flux RSS »**, puis copiez le lien généré.
+2. Dans l'app, onglet **Réglages → Actualités CBD**, collez ce lien et enregistrez.
+3. L'onglet Actualités se remplit automatiquement (rafraîchi toutes les 30 minutes côté serveur pour ne pas solliciter la source à chaque ouverture).
+
 ## Sécurité
 
 - L'API vérifie la clé secrète (`X-Api-Key`) sur chaque requête — sans la bonne clé, aucune donnée n'est accessible.

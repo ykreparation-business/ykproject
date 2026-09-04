@@ -833,6 +833,73 @@ main {
   white-space: nowrap;
 }
 
+/* ============================== Actualités ============================== */
+
+#view-actualites {
+  flex-direction: column;
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+  gap: 0.8rem;
+}
+
+.actu-maj {
+  font-size: 0.8rem;
+  color: var(--encre-doux);
+}
+
+.actu-carte {
+  display: block;
+  background: var(--carte);
+  border: 1px solid var(--ligne);
+  border-radius: var(--radius-m);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 0.8rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.actu-carte:active { transform: scale(0.99); }
+
+.actu-carte .date {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--mousse);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.actu-carte .titre {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.35rem 0 0.5rem;
+  color: var(--encre);
+}
+
+.actu-carte .resume {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--encre-doux);
+}
+
+.actu-carte .lien {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--mousse-fonce);
+}
+
+.actu-erreur {
+  font-size: 0.85rem;
+  color: var(--rupture);
+  background: rgba(163, 75, 58, 0.08);
+  border: 1px solid rgba(163, 75, 58, 0.25);
+  border-radius: var(--radius-m);
+  padding: 1rem 1.2rem;
+}
+
 .rapport-actions {
   display: flex;
   gap: 0.7rem;

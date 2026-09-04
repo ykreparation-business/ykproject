@@ -24,6 +24,7 @@
       <button id="tab-vente" class="active">Vente</button>
       <button id="tab-produits">Produits</button>
       <button id="tab-rapports">Rapports</button>
+      <button id="tab-actualites">Actualités</button>
       <button id="tab-reglages">Réglages</button>
     </nav>
     <button class="employe-pill hidden" id="employe-pill" title="Changer d'utilisateur">👤 <span class="nom"></span></button>
@@ -150,6 +151,20 @@
       </div>
     </section>
 
+    <!-- ============================== ACTUALITÉS ============================== -->
+    <section id="view-actualites" class="view">
+      <div class="view-header">
+        <h2>Actualités CBD</h2>
+        <button class="btn-secondary" id="btn-actualiser-news">⟳ Actualiser</button>
+      </div>
+      <p class="actu-maj" id="actu-derniere-maj"></p>
+      <div id="actu-liste"></div>
+      <div class="empty-state hidden" id="actu-empty">
+        <h3>Aucun flux configuré</h3>
+        <p>Renseignez l'URL d'un flux RSS d'actualités CBD dans Réglages pour afficher les dernières nouvelles ici.</p>
+      </div>
+    </section>
+
     <!-- ============================== RÉGLAGES ============================== -->
     <section id="view-reglages" class="view">
       <div class="view-header">
@@ -231,6 +246,18 @@
           <button type="submit" class="btn-primary">Enregistrer les identifiants</button>
           <button type="button" class="btn-secondary" id="btn-sync-now">⟳ Synchroniser maintenant</button>
         </div>
+      </form>
+
+      <form class="form-card" id="form-actualites">
+        <h4>Actualités CBD</h4>
+        <p style="font-size: 0.85rem; color: var(--encre-doux); margin-bottom: 1rem;">Affiche les dernières actualités CBD dans l'onglet « Actualités », à partir d'un flux RSS de votre choix. Astuce : créez une alerte sur <a href="https://google.com/alerts" target="_blank" rel="noopener" style="color: var(--mousse);">google.com/alerts</a> (ex. « CBD actualité »), livraison « Flux RSS », puis collez son lien ici.</p>
+        <div class="field-row">
+          <div class="field full">
+            <label for="actu-flux-url">URL du flux RSS</label>
+            <input type="url" id="actu-flux-url" placeholder="https://…/feed">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Enregistrer</button>
       </form>
 
       <div class="form-card">

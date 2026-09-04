@@ -17,6 +17,7 @@ const defaultState = () => ({
     siret: '98220695500000',
     naf: '4637Z',
     fondCaisseInitial: 0,
+    fluxActualitesUrl: '',
   },
   products: [],
   employees: [
@@ -220,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('employe-pill').addEventListener('click', deconnecterEmploye);
 });
 
-const views = ['vente', 'produits', 'rapports', 'reglages'];
+const views = ['vente', 'produits', 'rapports', 'actualites', 'reglages'];
 
 function switchView(name) {
   views.forEach((v) => {
@@ -230,6 +231,7 @@ function switchView(name) {
   if (name === 'vente') renderVente();
   if (name === 'produits') renderProduits();
   if (name === 'rapports') renderRapports();
+  if (name === 'actualites') renderActualites();
   if (name === 'reglages') renderReglages();
 }
 
@@ -823,6 +825,8 @@ function renderReglages() {
   document.getElementById('sync-key').value = syncConfig.apiKey || '';
   renderSyncStatus();
   renderEmployesListe();
+
+  document.getElementById('actu-flux-url').value = s.fluxActualitesUrl || '';
 }
 
 /* -------- Gestion des employés (Réglages) -------- */
@@ -906,7 +910,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('form-reglages').addEventListener('submit', (e) => {
     e.preventDefault();
-    state.settings = {
+    Object.assign(state.settings, {
       nom: document.getElementById('reg-nom').value.trim(),
       adresse: document.getElementById('reg-adresse').value.trim(),
       ville: document.getElementById('reg-ville').value.trim(),
@@ -914,9 +918,16 @@ document.addEventListener('DOMContentLoaded', () => {
       siret: document.getElementById('reg-siret').value.trim(),
       naf: document.getElementById('reg-naf').value.trim(),
       fondCaisseInitial: Number(document.getElementById('reg-fond').value) || 0,
-    };
+    });
     saveState();
     toast('Réglages enregistrés');
+  });
+
+  document.getElementById('form-actualites').addEventListener('submit', (e) => {
+    e.preventDefault();
+    state.settings.fluxActualitesUrl = document.getElementById('actu-flux-url').value.trim();
+    saveState();
+    toast('Flux d’actualités enregistré');
   });
 
   document.getElementById('btn-export').addEventListener('click', () => {
@@ -1090,6 +1101,111 @@ async function requestSync(manual) {
 document.addEventListener('DOMContentLoaded', () => {
   requestSync(false);
   setInterval(() => requestSync(false), 5 * 60 * 1000);
+});
+
+/* ============================================================
+   ACTUALITÉS CBD — flux RSS récupéré via le backend (évite le CORS)
+   ============================================================ */
+
+const ACTU_CACHE_KEY = 'natirel_actualites_cache_v1';
+
+function actualitesEndpoint() {
+  if (!syncConfig.apiUrl) return null;
+  return syncConfig.apiUrl.replace(/sync\.php(\?.*)?$/, 'actualites.php');
+}
+
+function renderActualites() {
+  const liste = document.getElementById('actu-liste');
+  const empty = document.getElementById('actu-empty');
+  const maj = document.getElementById('actu-derniere-maj');
+  const feedUrl = state.settings.fluxActualitesUrl;
+
+  if (!feedUrl) {
+    liste.innerHTML = '';
+    maj.textContent = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  let cache = null;
+  try {
+    cache = JSON.parse(localStorage.getItem(ACTU_CACHE_KEY) || 'null');
+  } catch (e) {}
+
+  if (cache && cache.feedUrl === feedUrl) {
+    afficherActualites(cache.items, cache.recupereLe);
+  } else {
+    liste.innerHTML = '';
+    maj.textContent = 'Chargement…';
+  }
+
+  chargerActualites();
+}
+
+function afficherActualites(items, recupereLe) {
+  const liste = document.getElementById('actu-liste');
+  const maj = document.getElementById('actu-derniere-maj');
+
+  maj.textContent = recupereLe ? 'Dernière mise à jour : ' + fmtDateTime(recupereLe) : '';
+
+  if (!items || items.length === 0) {
+    liste.innerHTML = '<p style="font-size:0.85rem; color:var(--encre-doux);">Aucun article récupéré pour l’instant.</p>';
+    return;
+  }
+
+  liste.innerHTML = items
+    .map((it) => {
+      const d = it.date ? new Date(it.date) : null;
+      const dateAffichee = d && !isNaN(d) ? fmtDate(d) : '';
+      return `
+      <a class="actu-carte" href="${escapeAttr(it.lien || '#')}" target="_blank" rel="noopener noreferrer">
+        ${dateAffichee ? `<div class="date">${dateAffichee}</div>` : ''}
+        <div class="titre">${escapeHtml(it.titre || 'Sans titre')}</div>
+        ${it.resume ? `<div class="resume">${escapeHtml(it.resume)}</div>` : ''}
+        <span class="lien">Lire l’article →</span>
+      </a>`;
+    })
+    .join('');
+}
+
+let chargementActualitesEnCours = false;
+
+async function chargerActualites(manual) {
+  const feedUrl = state.settings.fluxActualitesUrl;
+  const endpoint = actualitesEndpoint();
+  if (!feedUrl) return;
+  if (!endpoint || !syncConfig.apiKey) {
+    if (manual) toast('Configurez d’abord la synchronisation (Réglages) pour activer les actualités.');
+    return;
+  }
+  if (chargementActualitesEnCours) return;
+  chargementActualitesEnCours = true;
+
+  try {
+    const res = await fetch(endpoint + '?url=' + encodeURIComponent(feedUrl), {
+      headers: { 'X-Api-Key': syncConfig.apiKey },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erreur inconnue');
+
+    localStorage.setItem(ACTU_CACHE_KEY, JSON.stringify({ feedUrl, items: data.items, recupereLe: data.recupereLe }));
+    if (document.getElementById('view-actualites').classList.contains('active')) {
+      afficherActualites(data.items, data.recupereLe);
+    }
+    if (manual) toast('Actualités mises à jour');
+  } catch (err) {
+    console.error('Erreur actualités', err);
+    if (manual) {
+      document.getElementById('actu-liste').innerHTML = `<div class="actu-erreur">Impossible de charger les actualités : ${escapeHtml(err.message)}</div>`;
+    }
+  } finally {
+    chargementActualitesEnCours = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btn-actualiser-news').addEventListener('click', () => chargerActualites(true));
 });
 
 /* ============================================================
