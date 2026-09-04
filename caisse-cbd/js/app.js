@@ -19,6 +19,10 @@ const defaultState = () => ({
     fondCaisseInitial: 0,
   },
   products: [],
+  employees: [
+    { id: 'lory', nom: 'Lory', pin: '1234', deleted: false, dirty: true },
+    { id: 'kevin', nom: 'Kevin', pin: '5678', deleted: false, dirty: true },
+  ],
   sales: [],
   cart: [], // [{productId, qty}]
   remise: 0,
@@ -88,6 +92,133 @@ function toast(msg) {
 /* ============================================================
    Navigation entre vues
    ============================================================ */
+
+/* ============================================================
+   SESSION — connexion par employé (nom + code PIN)
+   ============================================================ */
+
+const SESSION_KEY = 'natirel_caisse_employe_v1';
+
+function employesActifs() {
+  return state.employees.filter((e) => !e.deleted);
+}
+
+function loadSessionEmploye() {
+  try {
+    const id = sessionStorage.getItem(SESSION_KEY);
+    if (!id) return null;
+    return employesActifs().find((e) => e.id === id) || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+let currentEmploye = null;
+let pinSaisi = '';
+let employeCible = null; // employé sélectionné dans l'écran de connexion, en attente du PIN
+
+function renderHeaderEmploye() {
+  const pill = document.getElementById('employe-pill');
+  if (!pill) return;
+  if (currentEmploye) {
+    pill.classList.remove('hidden');
+    pill.querySelector('.nom').textContent = currentEmploye.nom;
+  } else {
+    pill.classList.add('hidden');
+  }
+}
+
+function ouvrirEcranConnexion() {
+  employeCible = null;
+  pinSaisi = '';
+  renderGrilleEmployes();
+  document.getElementById('login-etape-nom').classList.remove('hidden');
+  document.getElementById('login-etape-pin').classList.add('hidden');
+  document.getElementById('overlay-login').classList.remove('hidden');
+}
+
+function fermerEcranConnexion() {
+  document.getElementById('overlay-login').classList.add('hidden');
+}
+
+function renderGrilleEmployes() {
+  const grid = document.getElementById('login-employes-grid');
+  const actifs = employesActifs();
+  grid.innerHTML = actifs
+    .map((e) => `<button class="employe-card" data-id="${e.id}">${escapeHtml(e.nom)}</button>`)
+    .join('');
+  grid.querySelectorAll('.employe-card').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      employeCible = actifs.find((e) => e.id === btn.dataset.id);
+      pinSaisi = '';
+      document.getElementById('login-pin-nom').textContent = employeCible.nom;
+      document.getElementById('login-pin-erreur').classList.add('hidden');
+      renderPinDots();
+      document.getElementById('login-etape-nom').classList.add('hidden');
+      document.getElementById('login-etape-pin').classList.remove('hidden');
+    });
+  });
+}
+
+function renderPinDots() {
+  document.querySelectorAll('#login-pin-dots .pin-dot').forEach((dot, i) => {
+    dot.classList.toggle('rempli', i < pinSaisi.length);
+  });
+}
+
+function saisirChiffrePin(chiffre) {
+  if (pinSaisi.length >= 4) return;
+  pinSaisi += chiffre;
+  renderPinDots();
+  if (pinSaisi.length === 4) {
+    if (employeCible && pinSaisi === employeCible.pin) {
+      connecterEmploye(employeCible);
+    } else {
+      const pad = document.getElementById('login-pinpad');
+      pad.classList.add('erreur');
+      document.getElementById('login-pin-erreur').classList.remove('hidden');
+      setTimeout(() => {
+        pad.classList.remove('erreur');
+        pinSaisi = '';
+        renderPinDots();
+      }, 450);
+    }
+  }
+}
+
+function connecterEmploye(employe) {
+  currentEmploye = employe;
+  try {
+    sessionStorage.setItem(SESSION_KEY, employe.id);
+  } catch (e) {}
+  fermerEcranConnexion();
+  renderHeaderEmploye();
+  renderRapports();
+}
+
+function deconnecterEmploye() {
+  currentEmploye = null;
+  try {
+    sessionStorage.removeItem(SESSION_KEY);
+  } catch (e) {}
+  renderHeaderEmploye();
+  ouvrirEcranConnexion();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('login-pinpad').querySelectorAll('button[data-chiffre]').forEach((btn) => {
+    btn.addEventListener('click', () => saisirChiffrePin(btn.dataset.chiffre));
+  });
+  document.getElementById('login-pin-effacer').addEventListener('click', () => {
+    pinSaisi = pinSaisi.slice(0, -1);
+    renderPinDots();
+  });
+  document.getElementById('login-pin-retour').addEventListener('click', () => {
+    document.getElementById('login-etape-pin').classList.add('hidden');
+    document.getElementById('login-etape-nom').classList.remove('hidden');
+  });
+  document.getElementById('employe-pill').addEventListener('click', deconnecterEmploye);
+});
 
 const views = ['vente', 'produits', 'rapports', 'reglages'];
 
@@ -342,6 +473,8 @@ function validerVente() {
     total,
     voided: false,
     dirty: true,
+    employeId: currentEmploye ? currentEmploye.id : null,
+    employeNom: currentEmploye ? currentEmploye.nom : null,
   };
 
   state.sales.push(sale);
@@ -485,6 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
 let rapportMode = 'jour';
 let rapportDate = todayISO();
 let rapportMois = todayISO().slice(0, 7);
+let rapportEmployeId = 'tous';
 
 function salesForDay(dateStr) {
   return state.sales.filter((s) => isSameDay(s.dateISO, dateStr));
@@ -540,14 +674,37 @@ function computeAgregat(sales) {
   };
 }
 
+function renderFiltreEmploye() {
+  const select = document.getElementById('rapport-employe');
+  if (!select) return;
+  const idsConnus = new Set(state.sales.map((s) => s.employeId).filter(Boolean));
+  employesActifs().forEach((e) => idsConnus.add(e.id));
+  const nomPour = (id) => {
+    const actif = state.employees.find((e) => e.id === id);
+    if (actif) return actif.nom;
+    const vente = state.sales.find((s) => s.employeId === id);
+    return vente ? vente.employeNom : id;
+  };
+  const valeurActuelle = select.value || 'tous';
+  select.innerHTML =
+    `<option value="tous">Tous les employés</option>` +
+    Array.from(idsConnus)
+      .map((id) => `<option value="${escapeAttr(id)}">${escapeHtml(nomPour(id))}</option>`)
+      .join('');
+  select.value = Array.from(idsConnus).includes(valeurActuelle) ? valeurActuelle : 'tous';
+  select.classList.toggle('hidden', idsConnus.size === 0);
+}
+
 function renderRapports() {
   document.querySelectorAll('.rapport-toggle button').forEach((b) => b.classList.toggle('active', b.dataset.mode === rapportMode));
   document.getElementById('rapport-jour-picker').classList.toggle('hidden', rapportMode !== 'jour');
   document.getElementById('rapport-mois-picker').classList.toggle('hidden', rapportMode !== 'mois');
   document.getElementById('input-date-jour').value = rapportDate;
   document.getElementById('input-date-mois').value = rapportMois;
+  renderFiltreEmploye();
 
-  const sales = rapportMode === 'jour' ? salesForDay(rapportDate) : salesForMonth(rapportMois);
+  let sales = rapportMode === 'jour' ? salesForDay(rapportDate) : salesForMonth(rapportMois);
+  if (rapportEmployeId !== 'tous') sales = sales.filter((s) => s.employeId === rapportEmployeId);
   const agr = computeAgregat(sales);
 
   document.getElementById('rapport-titre').textContent =
@@ -593,9 +750,13 @@ document.addEventListener('DOMContentLoaded', () => {
     rapportMois = e.target.value;
     renderRapports();
   });
+  document.getElementById('rapport-employe').addEventListener('change', (e) => {
+    rapportEmployeId = e.target.value;
+    renderRapports();
+  });
   document.getElementById('btn-imprimer-rapport').addEventListener('click', () => {
-    if (rapportMode === 'jour') printTicketZ(rapportDate);
-    else printTicketX(rapportMois);
+    if (rapportMode === 'jour') printTicketZ(rapportDate, window._rapportCourant.sales);
+    else printTicketX(rapportMois, window._rapportCourant.sales);
   });
 });
 
@@ -616,7 +777,86 @@ function renderReglages() {
   document.getElementById('sync-url').value = syncConfig.apiUrl || '';
   document.getElementById('sync-key').value = syncConfig.apiKey || '';
   renderSyncStatus();
+  renderEmployesListe();
 }
+
+/* -------- Gestion des employés (Réglages) -------- */
+
+function renderEmployesListe() {
+  const wrap = document.getElementById('employes-liste');
+  const actifs = employesActifs();
+
+  wrap.innerHTML = actifs
+    .map(
+      (e) => `
+    <div class="produit-row" data-id="${e.id}">
+      <span class="nom">${escapeHtml(e.nom)}</span>
+      <span class="tva">PIN ••••</span>
+      <button class="icon-btn edit" aria-label="Modifier">✎</button>
+      <button class="icon-btn del" aria-label="Supprimer">🗑</button>
+    </div>`
+    )
+    .join('');
+
+  wrap.querySelectorAll('.produit-row').forEach((row) => {
+    const id = row.dataset.id;
+    row.querySelector('.edit').addEventListener('click', () => openEmployeForm(id));
+    row.querySelector('.del').addEventListener('click', () => {
+      const e = state.employees.find((em) => em.id === id);
+      if (confirm(`Supprimer « ${e.nom} » des employés ?`)) {
+        e.deleted = true;
+        e.dirty = true;
+        if (currentEmploye && currentEmploye.id === id) deconnecterEmploye();
+        saveState();
+        renderEmployesListe();
+        requestSync();
+      }
+    });
+  });
+}
+
+function openEmployeForm(id) {
+  const e = id ? state.employees.find((em) => em.id === id) : null;
+  document.getElementById('employe-form-titre').textContent = e ? 'Modifier l’employé' : 'Nouvel employé';
+  document.getElementById('employe-id').value = e ? e.id : '';
+  document.getElementById('employe-nom').value = e ? e.nom : '';
+  document.getElementById('employe-pin-input').value = e ? e.pin : '';
+  document.getElementById('overlay-employe').classList.remove('hidden');
+  document.getElementById('employe-nom').focus();
+}
+
+function closeEmployeForm() {
+  document.getElementById('overlay-employe').classList.add('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btn-nouvel-employe').addEventListener('click', () => openEmployeForm(null));
+  document.getElementById('overlay-employe').addEventListener('click', (e) => {
+    if (e.target.id === 'overlay-employe') closeEmployeForm();
+  });
+  document.getElementById('btn-annuler-employe').addEventListener('click', closeEmployeForm);
+  document.getElementById('form-employe').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = document.getElementById('employe-id').value;
+    const nom = document.getElementById('employe-nom').value.trim();
+    const pin = document.getElementById('employe-pin-input').value.trim();
+    if (!nom || !/^\d{4}$/.test(pin)) {
+      alert('Le code PIN doit comporter exactement 4 chiffres.');
+      return;
+    }
+    if (id) {
+      const emp = state.employees.find((em) => em.id === id);
+      Object.assign(emp, { nom, pin, dirty: true });
+    } else {
+      state.employees.push({ id: uid(), nom, pin, deleted: false, dirty: true });
+    }
+    saveState();
+    closeEmployeForm();
+    renderEmployesListe();
+    toast('Employé enregistré');
+    requestSync();
+  });
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('form-reglages').addEventListener('submit', (e) => {
@@ -735,6 +975,7 @@ async function requestSync(manual) {
 
   const produitsAEnvoyer = state.products.filter((p) => p.dirty);
   const ventesAEnvoyer = state.sales.filter((s) => s.dirty);
+  const employesAEnvoyer = state.employees.filter((e) => e.dirty);
 
   try {
     const res = await fetch(syncConfig.apiUrl, {
@@ -743,6 +984,7 @@ async function requestSync(manual) {
       body: JSON.stringify({
         produits: produitsAEnvoyer,
         ventes: ventesAEnvoyer,
+        employes: employesAEnvoyer,
         reglages: state.settings,
       }),
     });
@@ -751,6 +993,7 @@ async function requestSync(manual) {
 
     const idsProduitsEnvoyes = new Set(produitsAEnvoyer.map((p) => p.id));
     const idsVentesEnvoyees = new Set(ventesAEnvoyer.map((s) => s.id));
+    const idsEmployesEnvoyes = new Set(employesAEnvoyer.map((e) => e.id));
 
     (data.produits || []).forEach((serverP) => {
       const local = state.products.find((p) => p.id === serverP.id);
@@ -767,6 +1010,15 @@ async function requestSync(manual) {
         state.sales.push(Object.assign({}, serverS, { dirty: false }));
       } else if (!local.dirty || idsVentesEnvoyees.has(local.id)) {
         Object.assign(local, serverS, { dirty: false });
+      }
+    });
+
+    (data.employes || []).forEach((serverE) => {
+      const local = state.employees.find((e) => e.id === serverE.id);
+      if (!local) {
+        state.employees.push(Object.assign({}, serverE, { dirty: false }));
+      } else if (!local.dirty || idsEmployesEnvoyes.has(local.id)) {
+        Object.assign(local, serverE, { dirty: false });
       }
     });
 
@@ -848,23 +1100,26 @@ function printTicketVente(sale) {
            <div class="p-row p-small"><span>Rendu</span><span>${eur(sale.montantRecu - sale.total)}</span></div>`
         : ''
     }
+    ${sale.employeNom ? `<div class="p-row p-small"><span>Vendu par</span><span>${escapeHtml(sale.employeNom)}</span></div>` : ''}
     ${piedLegal()}
     <p class="p-center p-small" style="margin-top:8px;">Merci de votre visite</p>
   `;
   window.print();
 }
 
-function printTicketZ(dateStr) {
-  const sales = salesForDay(dateStr);
+function printTicketZ(dateStr, sales) {
+  sales = sales || salesForDay(dateStr);
   const agr = computeAgregat(sales);
   const s = state.settings;
   const area = document.getElementById('print-area');
+  const filtreEmploye = rapportEmployeId !== 'tous' ? document.getElementById('rapport-employe').selectedOptions[0].textContent : null;
 
   area.innerHTML = `
     <h1>Ticket Z</h1>
     ${enteteEntreprise()}
     <div class="p-rule"></div>
     <div class="p-row p-small"><span>Date</span><span>${fmtDate(dateStr)}</span></div>
+    ${filtreEmploye ? `<div class="p-row p-small"><span>Employé</span><span>${escapeHtml(filtreEmploye)}</span></div>` : ''}
     <div class="p-row p-small"><span>Impression</span><span>${fmtDateTime(new Date())}</span></div>
     <div class="p-row"><span>Commandes</span><span>${agr.commandes}</span></div>
     <div class="p-row"><span>Clients</span><span>${agr.clients}</span></div>
@@ -891,19 +1146,21 @@ function printTicketZ(dateStr) {
   window.print();
 }
 
-function printTicketX(monthStr) {
-  const sales = salesForMonth(monthStr);
+function printTicketX(monthStr, sales) {
+  sales = sales || salesForMonth(monthStr);
   const agr = computeAgregat(sales);
   const s = state.settings;
   const area = document.getElementById('print-area');
   const joursTravailles = new Set(sales.filter((v) => !v.voided).map((v) => localDateStr(v.dateISO))).size;
   const libelleMois = new Date(monthStr + '-01').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  const filtreEmploye = rapportEmployeId !== 'tous' ? document.getElementById('rapport-employe').selectedOptions[0].textContent : null;
 
   area.innerHTML = `
     <h1>Ticket X mensuel</h1>
     <p class="p-center p-bold">${escapeHtml(libelleMois)}</p>
     ${enteteEntreprise()}
     <div class="p-rule"></div>
+    ${filtreEmploye ? `<div class="p-row p-small"><span>Employé</span><span>${escapeHtml(filtreEmploye)}</span></div>` : ''}
     <div class="p-row p-small"><span>Date impression</span><span>${fmtDateTime(new Date())}</span></div>
     <div class="p-row p-small"><span>Jours travaillés</span><span>${joursTravailles}</span></div>
     <div class="p-row"><span>Commandes</span><span>${agr.commandes}</span></div>
@@ -953,4 +1210,10 @@ document.addEventListener('DOMContentLoaded', () => {
   tickClock();
   setInterval(tickClock, 15000);
   renderVente();
+
+  if (employesActifs().length > 0) {
+    currentEmploye = loadSessionEmploye();
+    renderHeaderEmploye();
+    if (!currentEmploye) ouvrirEcranConnexion();
+  }
 });

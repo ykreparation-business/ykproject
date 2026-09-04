@@ -26,6 +26,7 @@
       <button id="tab-rapports">Rapports</button>
       <button id="tab-reglages">Réglages</button>
     </nav>
+    <button class="employe-pill hidden" id="employe-pill" title="Changer d'utilisateur">👤 <span class="nom"></span></button>
     <span class="clock" id="clock">--:--</span>
   </header>
 
@@ -100,6 +101,8 @@
         <label for="input-date-mois">Mois de</label>
         <input type="month" id="input-date-mois">
       </div>
+
+      <select class="employe-filtre hidden" id="rapport-employe"></select>
 
       <h3 style="font-family: var(--font-display); font-size: 1.15rem;" id="rapport-titre"></h3>
 
@@ -191,6 +194,15 @@
         <button type="submit" class="btn-primary" style="margin-top: 0.5rem;">Enregistrer</button>
       </form>
 
+      <div class="form-card">
+        <div class="view-header" style="margin-bottom: 1rem;">
+          <h4 style="margin: 0;">Employés</h4>
+          <button class="btn-primary" id="btn-nouvel-employe">+ Nouvel employé</button>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--encre-doux); margin-bottom: 1rem;">Chaque employé se connecte avec son nom et son code PIN avant d'encaisser ; les ventes lui sont attribuées dans les rapports.</p>
+        <div id="employes-liste"></div>
+      </div>
+
       <form class="form-card" id="form-sync">
         <h4>Synchronisation (base de données Hostinger)</h4>
         <p style="font-size: 0.85rem; color: var(--encre-doux); margin-bottom: 1rem;">Envoie automatiquement les ventes et le catalogue vers votre base de données en ligne, pour la comptabilité et le suivi à distance.</p>
@@ -234,6 +246,41 @@
     </section>
 
   </main>
+
+  <!-- ============================== CONNEXION EMPLOYÉ ============================== -->
+  <div class="login-overlay hidden" id="overlay-login">
+    <div class="login-box">
+      <div id="login-etape-nom">
+        <div class="login-brand">Natirèl <span>CAISSE</span></div>
+        <h3>Qui êtes-vous ?</h3>
+        <div class="employes-grid" id="login-employes-grid"></div>
+      </div>
+
+      <div id="login-etape-pin" class="hidden">
+        <button class="login-retour" id="login-pin-retour">‹ Retour</button>
+        <h3>Bonjour <span id="login-pin-nom"></span></h3>
+        <p class="login-sous-titre">Entrez votre code PIN</p>
+        <div class="pin-dots" id="login-pin-dots">
+          <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+        </div>
+        <p class="login-erreur hidden" id="login-pin-erreur">Code incorrect, réessayez.</p>
+        <div class="pinpad" id="login-pinpad">
+          <button data-chiffre="1">1</button>
+          <button data-chiffre="2">2</button>
+          <button data-chiffre="3">3</button>
+          <button data-chiffre="4">4</button>
+          <button data-chiffre="5">5</button>
+          <button data-chiffre="6">6</button>
+          <button data-chiffre="7">7</button>
+          <button data-chiffre="8">8</button>
+          <button data-chiffre="9">9</button>
+          <span></span>
+          <button data-chiffre="0">0</button>
+          <button id="login-pin-effacer" aria-label="Effacer">⌫</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ============================== MODALE PAIEMENT ============================== -->
   <div class="modal-overlay hidden" id="overlay-paiement">
@@ -291,6 +338,26 @@
 
         <div class="modal-actions">
           <button type="button" class="btn-annuler" id="btn-annuler-produit">Annuler</button>
+          <button type="submit" class="btn-confirmer">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================== MODALE EMPLOYÉ ============================== -->
+  <div class="modal-overlay hidden" id="overlay-employe">
+    <div class="modal produit-form">
+      <h3 id="employe-form-titre">Nouvel employé</h3>
+      <form id="form-employe">
+        <input type="hidden" id="employe-id">
+        <label class="field" for="employe-nom">Nom</label>
+        <input type="text" id="employe-nom" required style="width:100%; padding:0.7rem 0.9rem; border:1px solid var(--ligne); border-radius:10px; margin-bottom:0.9rem; background: var(--sable);">
+
+        <label class="field" for="employe-pin-input">Code PIN (4 chiffres)</label>
+        <input type="text" id="employe-pin-input" inputmode="numeric" pattern="\d{4}" maxlength="4" required style="width:100%; padding:0.7rem 0.9rem; border:1px solid var(--ligne); border-radius:10px; margin-bottom:0.9rem; background: var(--sable);">
+
+        <div class="modal-actions">
+          <button type="button" class="btn-annuler" id="btn-annuler-employe">Annuler</button>
           <button type="submit" class="btn-confirmer">Enregistrer</button>
         </div>
       </form>

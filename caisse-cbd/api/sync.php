@@ -39,6 +39,7 @@ $pdo = natirel_pdo();
 $produitsIn = is_array($body['produits'] ?? null) ? $body['produits'] : [];
 $ventesIn = is_array($body['ventes'] ?? null) ? $body['ventes'] : [];
 $reglagesIn = is_array($body['reglages'] ?? null) ? $body['reglages'] : null;
+$employesIn = is_array($body['employes'] ?? null) ? $body['employes'] : [];
 
 // Convertit un ISO-8601 client (ex. "2026-09-04T21:30:00.000Z") en DATETIME MySQL (UTC, sans suffixe).
 function natirel_iso_vers_mysql($iso) {
@@ -77,9 +78,24 @@ try {
         ]);
     }
 
+    $stmtE = $pdo->prepare("
+        INSERT INTO employes (id, nom, pin, supprime)
+        VALUES (:id, :nom, :pin, :supprime)
+        ON DUPLICATE KEY UPDATE nom = VALUES(nom), pin = VALUES(pin), supprime = VALUES(supprime)
+    ");
+    foreach ($employesIn as $e) {
+        if (!isset($e['id'], $e['nom'], $e['pin'])) continue;
+        $stmtE->execute([
+            ':id' => substr((string) $e['id'], 0, 40),
+            ':nom' => substr((string) $e['nom'], 0, 120),
+            ':pin' => substr((string) $e['pin'], 0, 4),
+            ':supprime' => !empty($e['deleted']) ? 1 : 0,
+        ]);
+    }
+
     $stmtV = $pdo->prepare("
-        INSERT INTO ventes (id, date_iso, remise, mode_paiement, montant_recu, total, annulee)
-        VALUES (:id, :date_iso, :remise, :mode_paiement, :montant_recu, :total, :annulee)
+        INSERT INTO ventes (id, date_iso, remise, mode_paiement, montant_recu, total, annulee, employe_id, employe_nom)
+        VALUES (:id, :date_iso, :remise, :mode_paiement, :montant_recu, :total, :annulee, :employe_id, :employe_nom)
         ON DUPLICATE KEY UPDATE annulee = VALUES(annulee)
     ");
     $stmtDelLignes = $pdo->prepare("DELETE FROM vente_lignes WHERE vente_id = :vid");
@@ -103,6 +119,8 @@ try {
             ':montant_recu' => isset($v['montantRecu']) && $v['montantRecu'] !== null ? (float) $v['montantRecu'] : null,
             ':total' => (float) $v['total'],
             ':annulee' => !empty($v['voided']) ? 1 : 0,
+            ':employe_id' => isset($v['employeId']) && $v['employeId'] !== null ? substr((string) $v['employeId'], 0, 40) : null,
+            ':employe_nom' => isset($v['employeNom']) && $v['employeNom'] !== null ? substr((string) $v['employeNom'], 0, 120) : null,
         ]);
 
         $stmtDelLignes->execute([':vid' => $venteId]);
@@ -160,8 +178,17 @@ foreach ($produitsOut as &$p) {
 }
 unset($p);
 
+$employesOut = $pdo->query("
+    SELECT id, nom, pin, supprime AS deleted FROM employes
+")->fetchAll();
+foreach ($employesOut as &$e) {
+    $e['deleted'] = (bool) $e['deleted'];
+}
+unset($e);
+
 $ventesRows = $pdo->query("
-    SELECT id, date_iso, remise, mode_paiement AS paymentMethod, montant_recu AS montantRecu, total, annulee AS voided
+    SELECT id, date_iso, remise, mode_paiement AS paymentMethod, montant_recu AS montantRecu, total, annulee AS voided,
+           employe_id AS employeId, employe_nom AS employeNom
     FROM ventes ORDER BY date_iso DESC LIMIT 5000
 ")->fetchAll();
 
@@ -189,6 +216,8 @@ foreach ($ventesRows as $v) {
         'montantRecu' => $v['montantRecu'] !== null ? (float) $v['montantRecu'] : null,
         'total' => (float) $v['total'],
         'voided' => (bool) $v['voided'],
+        'employeId' => $v['employeId'],
+        'employeNom' => $v['employeNom'],
         'items' => $items,
     ];
 }
@@ -205,5 +234,6 @@ echo json_encode([
     'serverTime' => gmdate('c'),
     'produits' => $produitsOut,
     'ventes' => $ventesOut,
+    'employes' => $employesOut,
     'reglages' => $reglagesOut ?: null,
 ]);
