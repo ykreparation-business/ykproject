@@ -1,0 +1,10 @@
+{
+  "name": "Natirèl CBD — Caisse",
+  "short_name": "Natirèl Caisse",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#F3EEE0",
+  "theme_color": "#2C4531",
+  "lang": "fr"
+}

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Natirèl CBD — Caisse</title>
+<meta name="description" content="Application de caisse pour Natirèl CBD, Goyave, Guadeloupe.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Natirèl Caisse">
+<meta name="theme-color" content="#2C4531">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ============================== HEADER ============================== -->
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark">Natirèl</span>
+      <span class="brand-sub">CAISSE</span>
+    </div>
+    <nav class="tabs">
+      <button id="tab-vente" class="active">Vente</button>
+      <button id="tab-produits">Produits</button>
+      <button id="tab-rapports">Rapports</button>
+      <button id="tab-reglages">Réglages</button>
+    </nav>
+    <span class="clock" id="clock">--:--</span>
+  </header>
+
+  <main>
+
+    <!-- ============================== VENTE ============================== -->
+    <section id="view-vente" class="view active">
+      <div class="catalogue">
+        <div class="categories" id="categories"></div>
+        <div class="product-grid" id="product-grid"></div>
+        <div class="empty-state hidden" id="catalogue-empty">
+          <h3>Aucun produit pour l’instant</h3>
+          <p>Ajoutez vos premiers produits (huiles, fleurs, résines, infusions…) pour commencer à encaisser.</p>
+          <button id="btn-nouveau-produit-empty">+ Ajouter un produit</button>
+        </div>
+      </div>
+
+      <aside class="ticket-panel">
+        <div class="ticket-head">
+          <div class="titre">Ticket en cours</div>
+          <div class="compteur" id="ticket-count">0 article</div>
+        </div>
+        <div class="ticket-lines" id="ticket-lines"></div>
+        <div class="ticket-empty" id="ticket-empty">Touchez un produit pour l’ajouter au ticket.</div>
+        <div class="ticket-foot">
+          <div class="remise-row">
+            <span>Remise (€)</span>
+            <input type="number" id="remise-input" min="0" step="0.5" inputmode="decimal" placeholder="0,00">
+          </div>
+          <div class="total-row">
+            <span class="label">Total</span>
+            <span class="valeur" id="total-valeur">0,00 €</span>
+          </div>
+          <div class="pay-buttons">
+            <button class="btn-especes" id="btn-especes" disabled>💶 Espèces</button>
+            <button class="btn-cb" id="btn-cb" disabled>💳 Carte</button>
+          </div>
+          <button class="ticket-clear" id="ticket-clear-btn">Vider le ticket</button>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ============================== PRODUITS ============================== -->
+    <section id="view-produits" class="view">
+      <div class="view-header">
+        <h2>Produits</h2>
+        <button class="btn-primary" id="btn-nouveau-produit">+ Nouveau produit</button>
+      </div>
+      <div id="produits-liste"></div>
+      <div class="empty-state hidden" id="produits-empty">
+        <h3>Le catalogue est vide</h3>
+        <p>Créez vos produits avec leur prix TTC et leur taux de TVA (2,1 % ou 8,5 %).</p>
+      </div>
+    </section>
+
+    <!-- ============================== RAPPORTS ============================== -->
+    <section id="view-rapports" class="view">
+      <div class="view-header">
+        <h2>Rapports</h2>
+      </div>
+
+      <div class="rapport-toggle">
+        <button data-mode="jour" class="active">Ticket Z · jour</button>
+        <button data-mode="mois">Ticket X · mois</button>
+      </div>
+
+      <div class="date-picker" id="rapport-jour-picker">
+        <label for="input-date-jour">Journée du</label>
+        <input type="date" id="input-date-jour">
+      </div>
+      <div class="date-picker hidden" id="rapport-mois-picker">
+        <label for="input-date-mois">Mois de</label>
+        <input type="month" id="input-date-mois">
+      </div>
+
+      <h3 style="font-family: var(--font-display); font-size: 1.15rem;" id="rapport-titre"></h3>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="label">Commandes</div>
+          <div class="valeur" id="stat-commandes">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Clients</div>
+          <div class="valeur" id="stat-clients">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Ticket moyen</div>
+          <div class="valeur" id="stat-moyen">0,00 €</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Total encaissé</div>
+          <div class="valeur" id="stat-total">0,00 €</div>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <h4>Paiements</h4>
+        <div id="detail-paiements"></div>
+      </div>
+
+      <div class="detail-card">
+        <h4>TVA (TTC / HT / TVA)</h4>
+        <div id="detail-tva"></div>
+      </div>
+
+      <div class="detail-card">
+        <h4>Remises &amp; annulations</h4>
+        <div id="detail-remises"></div>
+      </div>
+
+      <div class="rapport-actions">
+        <button class="btn-secondary" id="btn-imprimer-rapport">🖨 Imprimer ce ticket</button>
+      </div>
+    </section>
+
+    <!-- ============================== RÉGLAGES ============================== -->
+    <section id="view-reglages" class="view">
+      <div class="view-header">
+        <h2>Réglages</h2>
+      </div>
+
+      <form class="form-card" id="form-reglages">
+        <h4>Informations de la boutique</h4>
+        <div class="field-row">
+          <div class="field full">
+            <label for="reg-nom">Nom commercial</label>
+            <input type="text" id="reg-nom" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field full">
+            <label for="reg-adresse">Adresse</label>
+            <input type="text" id="reg-adresse">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field full">
+            <label for="reg-ville">Code postal / Ville</label>
+            <input type="text" id="reg-ville">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="reg-tva">N° TVA intracommunautaire</label>
+            <input type="text" id="reg-tva">
+          </div>
+          <div class="field">
+            <label for="reg-siret">SIRET</label>
+            <input type="text" id="reg-siret">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="reg-naf">Code NAF</label>
+            <input type="text" id="reg-naf">
+          </div>
+          <div class="field">
+            <label for="reg-fond">Fond de caisse initial (€)</label>
+            <input type="number" id="reg-fond" step="0.01" min="0">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary" style="margin-top: 0.5rem;">Enregistrer</button>
+      </form>
+
+      <div class="form-card">
+        <h4>Sauvegarde des données</h4>
+        <p style="font-size: 0.85rem; color: var(--encre-doux); margin-bottom: 1rem;">Les données (produits, ventes) sont stockées sur cet iPad uniquement. Exportez régulièrement une sauvegarde.</p>
+        <div style="display:flex; gap:0.7rem; flex-wrap: wrap;">
+          <button class="btn-secondary" id="btn-export">⬇ Exporter une sauvegarde</button>
+          <label class="btn-secondary" style="display:inline-flex; align-items:center; cursor:pointer;">
+            ⬆ Importer une sauvegarde
+            <input type="file" id="input-import" accept="application/json" style="display:none;">
+          </label>
+        </div>
+      </div>
+
+      <div class="legal-note">
+        <strong>Conformité loi anti-fraude TVA (NF525).</strong> Cette application tient un journal des ventes et des tickets Z/X, mais n’a pas de certification officielle NF525. Pour un usage commercial encaissant des particuliers, une attestation de conformité (éditeur ou certificateur agréé) reste à obtenir séparément.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================== MODALE PAIEMENT ============================== -->
+  <div class="modal-overlay hidden" id="overlay-paiement">
+    <div class="modal">
+      <h3 id="modal-paiement-titre">Paiement</h3>
+      <div class="a-payer">
+        <div class="label">Montant à payer</div>
+        <div class="montant" id="modal-a-payer">0,00 €</div>
+      </div>
+
+      <div id="bloc-especes">
+        <label class="field" for="montant-recu">Montant reçu</label>
+        <input type="number" id="montant-recu" step="0.5" min="0" inputmode="decimal" placeholder="0,00">
+        <div class="quick-amounts">
+          <button data-amount="5">5 €</button>
+          <button data-amount="10">10 €</button>
+          <button data-amount="20">20 €</button>
+          <button data-amount="50">50 €</button>
+          <button data-amount="100">100 €</button>
+          <button data-exact="1">Exact</button>
+        </div>
+        <div class="rendu-row" id="rendu-row">
+          <span class="label">Rendu</span>
+          <span class="valeur" id="rendu-valeur">0,00 €</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-annuler" id="btn-annuler-paiement">Annuler</button>
+        <button class="btn-confirmer" id="btn-confirmer-paiement">Valider &amp; imprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================== MODALE PRODUIT ============================== -->
+  <div class="modal-overlay hidden" id="overlay-produit">
+    <div class="modal produit-form">
+      <h3 id="produit-form-titre">Nouveau produit</h3>
+      <form id="form-produit">
+        <input type="hidden" id="produit-id">
+        <label class="field" for="produit-nom">Nom du produit</label>
+        <input type="text" id="produit-nom" required style="width:100%; padding:0.7rem 0.9rem; border:1px solid var(--ligne); border-radius:10px; margin-bottom:0.9rem; background: var(--sable);">
+
+        <label class="field" for="produit-categorie">Catégorie</label>
+        <input type="text" id="produit-categorie" placeholder="Ex. Huiles CBD" style="width:100%; padding:0.7rem 0.9rem; border:1px solid var(--ligne); border-radius:10px; margin-bottom:0.9rem; background: var(--sable);">
+
+        <label class="field" for="produit-prix">Prix TTC (€)</label>
+        <input type="number" id="produit-prix" step="0.01" min="0" required style="width:100%; padding:0.7rem 0.9rem; border:1px solid var(--ligne); border-radius:10px; margin-bottom:0.9rem; background: var(--sable);">
+
+        <label class="field">Taux de TVA</label>
+        <div class="taux-choix">
+          <button type="button" data-taux="2.1">2,1 %</button>
+          <button type="button" data-taux="8.5">8,5 %</button>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-annuler" id="btn-annuler-produit">Annuler</button>
+          <button type="submit" class="btn-confirmer">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================== TOAST ============================== -->
+  <div class="toast" id="toast"><span class="dot"></span><span class="msg"></span></div>
+
+  <!-- ============================== ZONE D'IMPRESSION ============================== -->
+  <div id="print-area"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
