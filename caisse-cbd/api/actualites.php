@@ -27,40 +27,54 @@ if (!$feedUrl) {
     exit;
 }
 
-$parsed = parse_url($feedUrl);
-$scheme = strtolower($parsed['scheme'] ?? '');
-$host = strtolower($parsed['host'] ?? '');
+// Garde-fou anti-SSRF : on ne va jamais chercher une adresse locale/privée —
+// y compris après une redirection (voir natirel_fetch_feed), sans quoi un
+// flux qui redirige vers une adresse interne contournerait ce contrôle.
+function natirel_url_autorisee($url) {
+    $parsed = parse_url($url);
+    $scheme = strtolower($parsed['scheme'] ?? '');
+    $host = strtolower($parsed['host'] ?? '');
+    if (!$parsed || !in_array($scheme, ['http', 'https'], true) || $host === '') {
+        return false;
+    }
+    $estPrive = $host === 'localhost'
+        || preg_match('/^(127\.|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|169\.254\.)/', $host)
+        || $host === '::1';
+    return !$estPrive;
+}
 
-if (!$parsed || !in_array($scheme, ['http', 'https'], true) || $host === '') {
+if (!natirel_url_autorisee($feedUrl)) {
     http_response_code(400);
-    echo json_encode(['error' => 'URL de flux invalide.']);
+    echo json_encode(['error' => 'URL de flux invalide ou non autorisée.']);
     exit;
 }
 
-// Garde-fou anti-SSRF : on ne va jamais chercher une adresse locale/privée.
-$estPrive = $host === 'localhost'
-    || preg_match('/^(127\.|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|169\.254\.)/', $host)
-    || $host === '::1';
-if ($estPrive) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Cette adresse n’est pas autorisée.']);
-    exit;
-}
-
-function natirel_fetch_feed($url) {
+function natirel_fetch_feed($url, $sautsRestants = 3) {
+    if ($sautsRestants < 0) {
+        throw new Exception('Trop de redirections.');
+    }
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_MAXREDIRS => 3,
+        CURLOPT_FOLLOWLOCATION => false, // on gère la redirection nous-mêmes pour revalider chaque saut
         CURLOPT_TIMEOUT => 8,
         CURLOPT_USERAGENT => 'NatirelCaisse/1.0 (agrégateur de flux RSS)',
     ]);
     $body = curl_exec($ch);
     $err = curl_error($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $location = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
     curl_close($ch);
+
     if ($body === false) throw new Exception('Impossible de récupérer le flux : ' . $err);
+
+    if (in_array($code, [301, 302, 303, 307, 308], true) && $location) {
+        if (!natirel_url_autorisee($location)) {
+            throw new Exception('Le flux redirige vers une adresse non autorisée.');
+        }
+        return natirel_fetch_feed($location, $sautsRestants - 1);
+    }
+
     if ($code >= 400) throw new Exception('Le flux a répondu avec le code ' . $code);
     return $body;
 }

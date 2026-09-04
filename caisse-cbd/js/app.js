@@ -167,17 +167,33 @@ function renderPinDots() {
   });
 }
 
+let essaisPinEchoues = 0;
+let pinBloqueJusqua = 0;
+
 function saisirChiffrePin(chiffre) {
+  if (Date.now() < pinBloqueJusqua) return;
   if (pinSaisi.length >= 4) return;
   pinSaisi += chiffre;
   renderPinDots();
   if (pinSaisi.length === 4) {
     if (employeCible && pinSaisi === employeCible.pin) {
+      essaisPinEchoues = 0;
       connecterEmploye(employeCible);
     } else {
+      essaisPinEchoues += 1;
       const pad = document.getElementById('login-pinpad');
       pad.classList.add('erreur');
-      document.getElementById('login-pin-erreur').classList.remove('hidden');
+      const messageErreur = document.getElementById('login-pin-erreur');
+      // Ralentit les essais après plusieurs échecs successifs (limite le brute-force
+      // sur un code à 4 chiffres) sans jamais bloquer définitivement l'accès.
+      if (essaisPinEchoues >= 5) {
+        const attenteSecondes = Math.min(30, 5 * (essaisPinEchoues - 4));
+        pinBloqueJusqua = Date.now() + attenteSecondes * 1000;
+        messageErreur.textContent = `Trop d’essais, réessayez dans ${attenteSecondes}s.`;
+      } else {
+        messageErreur.textContent = 'Code incorrect, réessayez.';
+      }
+      messageErreur.classList.remove('hidden');
       setTimeout(() => {
         pad.classList.remove('erreur');
         pinSaisi = '';
@@ -643,14 +659,19 @@ function computeAgregat(sales) {
   let totalTTC = 0;
 
   valides.forEach((s) => {
+    // Défensif : une sauvegarde importée ou un enregistrement plus ancien peut
+    // porter un mode de paiement ou un taux de TVA imprévu — on ne doit jamais
+    // planter tout le rapport pour une seule vente malformée.
+    if (!parPaiement[s.paymentMethod]) parPaiement[s.paymentMethod] = { n: 0, total: 0 };
     parPaiement[s.paymentMethod].n += 1;
     parPaiement[s.paymentMethod].total += s.total;
     totalRemises += s.remise || 0;
     totalTTC += s.total;
-    s.items.forEach((it) => {
+    (s.items || []).forEach((it) => {
       const itTTC = it.prixTTC * it.qty;
       const itHT = ht(itTTC, it.tauxTVA);
       const itTVA = itTTC - itHT;
+      if (!parTVA[it.tauxTVA]) parTVA[it.tauxTVA] = { ttc: 0, ht: 0, tva: 0 };
       parTVA[it.tauxTVA].ttc += itTTC;
       parTVA[it.tauxTVA].ht += itHT;
       parTVA[it.tauxTVA].tva += itTVA;
@@ -695,6 +716,10 @@ function renderFiltreEmploye() {
       .join('');
   select.value = Array.from(idsConnus).includes(valeurActuelle) ? valeurActuelle : 'tous';
   select.classList.toggle('hidden', idsConnus.size === 0);
+  // Le sélecteur peut retomber sur "tous" (ex. l'employé filtré a disparu après un
+  // import) : la variable qui pilote réellement le filtre doit suivre, sinon le
+  // rapport affiché ne correspond plus à ce que montre le menu déroulant.
+  rapportEmployeId = select.value;
 }
 
 function renderRapports() {
@@ -1029,9 +1054,19 @@ async function requestSync(manual) {
   syncing = true;
   setSyncStatus('sync');
 
-  const produitsAEnvoyer = state.products.filter((p) => p.dirty);
-  const ventesAEnvoyer = state.sales.filter((s) => s.dirty);
-  const employesAEnvoyer = state.employees.filter((e) => e.dirty);
+  // Copies figées de ce qui part sur le réseau : si l'utilisateur modifie à
+  // nouveau un enregistrement pendant l'aller-retour, on doit s'en apercevoir
+  // au retour plutôt que d'écraser cette modification plus récente.
+  const produitsAEnvoyer = state.products.filter((p) => p.dirty).map((p) => Object.assign({}, p));
+  const ventesAEnvoyer = state.sales.filter((s) => s.dirty).map((s) => Object.assign({}, s));
+  const employesAEnvoyer = state.employees.filter((e) => e.dirty).map((e) => Object.assign({}, e));
+
+  const sansIndicateurDirty = (obj) => {
+    const copie = Object.assign({}, obj);
+    delete copie.dirty;
+    return JSON.stringify(copie);
+  };
+  const inchangeDepuisEnvoi = (local, envoye) => sansIndicateurDirty(local) === sansIndicateurDirty(envoye);
 
   try {
     const res = await fetch(syncConfig.apiUrl, {
@@ -1047,33 +1082,36 @@ async function requestSync(manual) {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
 
-    const idsProduitsEnvoyes = new Set(produitsAEnvoyer.map((p) => p.id));
-    const idsVentesEnvoyees = new Set(ventesAEnvoyer.map((s) => s.id));
-    const idsEmployesEnvoyes = new Set(employesAEnvoyer.map((e) => e.id));
+    const produitsEnvoyesParId = new Map(produitsAEnvoyer.map((p) => [p.id, p]));
+    const ventesEnvoyeesParId = new Map(ventesAEnvoyer.map((s) => [s.id, s]));
+    const employesEnvoyesParId = new Map(employesAEnvoyer.map((e) => [e.id, e]));
 
     (data.produits || []).forEach((serverP) => {
       const local = state.products.find((p) => p.id === serverP.id);
+      const envoye = produitsEnvoyesParId.get(serverP.id);
       if (!local) {
         state.products.push(Object.assign({}, serverP, { dirty: false }));
-      } else if (!local.dirty || idsProduitsEnvoyes.has(local.id)) {
+      } else if (!local.dirty || (envoye && inchangeDepuisEnvoi(local, envoye))) {
         Object.assign(local, serverP, { dirty: false });
       }
     });
 
     (data.ventes || []).forEach((serverS) => {
       const local = state.sales.find((s) => s.id === serverS.id);
+      const envoye = ventesEnvoyeesParId.get(serverS.id);
       if (!local) {
         state.sales.push(Object.assign({}, serverS, { dirty: false }));
-      } else if (!local.dirty || idsVentesEnvoyees.has(local.id)) {
+      } else if (!local.dirty || (envoye && inchangeDepuisEnvoi(local, envoye))) {
         Object.assign(local, serverS, { dirty: false });
       }
     });
 
     (data.employes || []).forEach((serverE) => {
       const local = state.employees.find((e) => e.id === serverE.id);
+      const envoye = employesEnvoyesParId.get(serverE.id);
       if (!local) {
         state.employees.push(Object.assign({}, serverE, { dirty: false }));
-      } else if (!local.dirty || idsEmployesEnvoyes.has(local.id)) {
+      } else if (!local.dirty || (envoye && inchangeDepuisEnvoi(local, envoye))) {
         Object.assign(local, serverE, { dirty: false });
       }
     });
