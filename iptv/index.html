@@ -51,6 +51,8 @@
     }
     .btn:hover { border-color: var(--muted); }
     .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+    .btn.back { display: inline-flex; align-items: center; text-decoration: none; color: var(--muted); font-size: 13px; }
+    @media (max-width: 480px) { .btn.back { display: none; } }
     .btn.icon { width: 40px; padding: 0; display: inline-grid; place-items: center; }
 
     .app { flex: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 0; }
@@ -137,6 +139,7 @@
 <body>
   <header>
     <div class="brand">YK<span>TV</span></div>
+    <a class="btn back" href="../index.html">← Retour au site</a>
     <div class="spacer"></div>
     <button class="btn icon" id="themeBtn" title="Changer de thème" aria-label="Changer de thème">◐</button>
     <button class="btn primary" id="openPlaylist">Playlist</button>
