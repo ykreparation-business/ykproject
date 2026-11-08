@@ -364,7 +364,10 @@
     };
 
     const PRESETS = [
-      { name: 'Démo (vidéos de test)', builtin: true },
+      { name: '★ Bouquet Antilles : Guadeloupe, Martinique, Guyane + films', bundle: 'antilles' },
+      { name: 'Guadeloupe', url: 'https://iptv-org.github.io/iptv/countries/gp.m3u' },
+      { name: 'Martinique', url: 'https://iptv-org.github.io/iptv/countries/mq.m3u' },
+      { name: 'Guyane', url: 'https://iptv-org.github.io/iptv/countries/gf.m3u' },
       { name: 'France', url: 'https://iptv-org.github.io/iptv/countries/fr.m3u' },
       { name: 'Belgique', url: 'https://iptv-org.github.io/iptv/countries/be.m3u' },
       { name: 'Suisse', url: 'https://iptv-org.github.io/iptv/countries/ch.m3u' },
@@ -372,8 +375,41 @@
       { name: 'Toutes les chaînes en français', url: 'https://iptv-org.github.io/iptv/languages/fra.m3u' },
       { name: 'Infos du monde entier', url: 'https://iptv-org.github.io/iptv/categories/news.m3u' },
       { name: 'Musique', url: 'https://iptv-org.github.io/iptv/categories/music.m3u' },
-      { name: 'Films', url: 'https://iptv-org.github.io/iptv/categories/movies.m3u' },
+      { name: 'Films (toutes langues)', url: 'https://iptv-org.github.io/iptv/categories/movies.m3u' },
+      { name: 'Démo (vidéos de test)', builtin: true },
     ];
+
+    // Bouquet: several free playlists merged, each mapped to its own row
+    const IPTV = 'https://iptv-org.github.io/iptv/';
+    const ANTILLES_RE = /guadeloupe|gwada|martinique|madinina|guyane|antilles|cara[iï]b|karib|outre-?mer|1[eè]re/i;
+    const BUNDLES = {
+      antilles: {
+        name: 'Bouquet Antilles',
+        sources: [
+          { url: IPTV + 'countries/gp.m3u', as: 'Guadeloupe' },
+          { url: IPTV + 'countries/mq.m3u', as: 'Martinique' },
+          { url: IPTV + 'countries/gf.m3u', as: 'Guyane' },
+          { url: IPTV + 'languages/fra.m3u', pick: c => ANTILLES_RE.test(c.name), as: 'Antilles & Outre-mer', onlyNew: true },
+          { url: IPTV + 'languages/fra.m3u', pick: c => c.groups.includes('Films'), as: 'Films' },
+          { url: IPTV + 'languages/fra.m3u', pick: c => c.groups.includes('Séries'), as: 'Séries' },
+          { url: IPTV + 'languages/fra.m3u', pick: c => c.groups.includes('Jeunesse') || c.groups.includes('Animation'), as: 'Jeunesse' },
+          { url: IPTV + 'languages/fra.m3u', pick: c => c.groups.includes('Musique'), as: 'Musique' },
+          { url: IPTV + 'languages/fra.m3u', pick: c => c.groups.includes('Infos'), as: 'Infos' },
+        ],
+        // Rows shown first, in this order
+        order: ['Guadeloupe', 'Martinique', 'Guyane', 'Antilles & Outre-mer', 'Films', 'Séries', 'Jeunesse', 'Musique', 'Infos'],
+      }
+    };
+
+    // iptv-org category names, shown in French
+    const GROUP_FR = {
+      animation: 'Animation', auto: 'Auto', business: 'Économie', classic: 'Classiques', comedy: 'Comédie',
+      cooking: 'Cuisine', culture: 'Culture', documentary: 'Documentaires', education: 'Éducation',
+      entertainment: 'Divertissement', family: 'Famille', general: 'Généralistes', kids: 'Jeunesse',
+      legislative: 'Politique', lifestyle: 'Art de vivre', movies: 'Films', music: 'Musique', news: 'Infos',
+      outdoor: 'Nature', relax: 'Détente', religious: 'Religion', science: 'Sciences', series: 'Séries',
+      shop: 'Shopping', sports: 'Sport', travel: 'Voyage', weather: 'Météo', undefined: 'Autres chaînes'
+    };
 
     const DEMO = `#EXTM3U
 #EXTINF:-1 group-title="Films d'animation",Big Buck Bunny
@@ -399,7 +435,8 @@ https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_exam
           const afterAttrs = line.lastIndexOf('"') + 1 || line.indexOf(':');
           const comma = line.indexOf(',', afterAttrs);
           const title = (comma >= 0 ? line.slice(comma + 1) : '').trim();
-          const groups = (attrs['group-title'] || '').split(';').map(s => s.trim()).filter(Boolean);
+          const groups = [...new Set((attrs['group-title'] || '').split(';').map(s => s.trim()).filter(Boolean)
+            .map(g => GROUP_FR[g.toLowerCase()] || g))];
           cur = { name: title || attrs['tvg-name'] || 'Sans nom', logo: attrs['tvg-logo'] || '', groups };
         } else if (line.startsWith('#EXTGRP:')) {
           if (cur && !cur.groups.length) cur.groups = [line.slice(8).trim()].filter(Boolean);
@@ -442,7 +479,8 @@ https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_exam
     }
     function cleanName(name) { return name.replace(/\s*\((\d{3,4}p|SD|HD|FHD|4K)\)|\s*\[[^\]]*\]/gi, '').trim() || name; }
 
-    function setChannels(arr, name) {
+    function setChannels(arr, name, order = []) {
+      groupOrder = order;
       channels = arr; byUrl = new Map(arr.map(c => [c.url, c])); groups = new Map();
       for (const c of arr) for (const g of c.groups) { if (!groups.has(g)) groups.set(g, []); groups.get(g).push(c); }
       playlistName = name || '';
@@ -517,8 +555,10 @@ https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_exam
       onScroll();
     }
 
+    let groupOrder = [];
     function sortedGroups() {
-      return [...groups.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'fr'));
+      const rank = (g) => { const i = groupOrder.indexOf(g); return i < 0 ? 1e6 : i; };
+      return [...groups.entries()].sort((a, b) => rank(a[0]) - rank(b[0]) || b[1].length - a[1].length || a[0].localeCompare(b[0], 'fr'));
     }
 
     function renderHome() {
@@ -786,6 +826,33 @@ https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_exam
         return false;
       }
     }
+    async function loadBundle(key, silent) {
+      const b = BUNDLES[key];
+      if (!silent) toast(`Chargement : ${b.name}…`);
+      const urls = [...new Set(b.sources.map(s => s.url))];
+      const texts = new Map();
+      await Promise.all(urls.map(u => fetch(u).then(r => r.ok ? r.text() : '').catch(() => '').then(t => texts.set(u, t))));
+      const merged = new Map();
+      for (const src of b.sources) {
+        for (const c of parseM3U(texts.get(src.url) || '')) {
+          if (src.pick && !src.pick(c)) continue;
+          const ex = merged.get(c.url);
+          if (ex && src.onlyNew) continue;
+          if (ex) { if (!ex.groups.includes(src.as)) ex.groups.push(src.as); }
+          else merged.set(c.url, { ...c, groups: [src.as] });
+        }
+      }
+      const arr = [...merged.values()];
+      if (!arr.length) {
+        toast('Le bouquet n\'a pas pu être chargé. Vérifiez votre connexion internet puis réessayez.', true);
+        return false;
+      }
+      store.set('source', { bundle: key, name: b.name });
+      setChannels(arr, b.name, b.order);
+      if (!silent) toast(`${arr.length} chaînes chargées`);
+      return true;
+    }
+
     function loadFromText(text, name, silent) {
       const arr = parseM3U(text);
       if (!arr.length) { toast('Aucune chaîne trouvée dans ce contenu. Il doit commencer par #EXTM3U.', true); return false; }
@@ -808,6 +875,7 @@ https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_exam
       const p = $('#presets'); p.innerHTML = '';
       for (const pr of PRESETS) p.appendChild(mk(pr.name, async () => {
         if (pr.builtin) { loadFromText(DEMO, pr.name); dlg.close(); }
+        else if (pr.bundle) { if (await loadBundle(pr.bundle)) dlg.close(); }
         else if (await loadFromUrl(pr.url, pr.name)) dlg.close();
       }));
       const saved = store.get('saved', []).filter(s => !PRESETS.some(x => x.url === s.url));
@@ -857,9 +925,11 @@ https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_exam
 
     // ---------- Boot ----------
     const src = store.get('source', null);
-    if (src && src.url) {
-      loadFromUrl(src.url, src.name).then(ok => { if (!ok) loadFromText(DEMO, 'Démo', true); });
-    } else if (src && src.text) loadFromText(src.text, src.name, true);
+    if (!src || src.bundle) {
+      loadBundle((src && src.bundle) || 'antilles', true).then(ok => { if (!ok) setChannels(parseM3U(DEMO), 'Démo'); });
+    } else if (src.url) {
+      loadFromUrl(src.url, src.name).then(ok => { if (!ok) setChannels(parseM3U(DEMO), 'Démo'); });
+    } else if (src.text) loadFromText(src.text, src.name, true);
     else loadFromText(DEMO, 'Démo', true);
   })();
   </script>
