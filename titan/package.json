@@ -1,0 +1,14 @@
+{
+  "name": "global-recovery-ai-titan",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GLOBAL RECOVERY AI TITAN — simulateur (environnement de simulation, aucune opération réelle)",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.21.5"
+  }
+}
